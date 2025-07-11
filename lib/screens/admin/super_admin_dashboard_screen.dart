@@ -1,35 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:structure_front/screens/auth/login_screen.dart'; // Pour la déconnexion
-import 'package:structure_front/screens/admin/admin_management_screen.dart'; // <-- Ajoutez cette ligne
-import 'package:structure_front/screens/admin/structure_management_screen.dart'; // Ajoutez cette ligne
+import 'package:structure_front/l10n/app_localizations.dart';
+import 'package:structure_front/screens/auth/login_screen.dart';
+import 'package:structure_front/screens/admin/admin_management_screen.dart';
+import 'package:structure_front/screens/admin/structure_management_screen.dart';
+
+import 'package:structure_front/main.dart'; // Import MyApp to access setLocale
+
 class SuperAdminDashboardScreen extends StatelessWidget {
   const SuperAdminDashboardScreen({super.key});
 
   void _logout(BuildContext context) {
-    // Logique de déconnexion (par exemple, effacer le token d'authentification)
-    // Pour l'instant, on redirige simplement vers l'écran de connexion
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => const LoginScreen()),
-      (Route<dynamic> route) => false, // Supprime toutes les routes précédentes
+      (Route<dynamic> route) => false,
     );
     print('Super Admin déconnecté.');
   }
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!; // Access translations
+
     return Scaffold(
-      backgroundColor: Colors.grey[50], // Fond gris très clair
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          'Tableau de Bord Super Admin',
-          style: TextStyle(color: Colors.white), // Texte blanc pour le titre
+        title: Text(
+          appLocalizations.appTitle, // Translated title
+          style: const TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.blueGrey[700], // Couleur foncée et sobre
+        backgroundColor: Colors.blueGrey[700],
         actions: [
+          // Language Selection Button
+          PopupMenuButton<Locale>(
+            icon: const Icon(Icons.language, color: Colors.white),
+            onSelected: (Locale locale) {
+              MyApp.of(context)?.setLocale(locale); // Set the new locale
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<Locale>>[
+              const PopupMenuItem<Locale>(
+                value: Locale('en'),
+                child: Text('English'),
+              ),
+              const PopupMenuItem<Locale>(
+                value: Locale('fr'),
+                child: Text('Français'),
+              ),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () => _logout(context),
-            tooltip: 'Déconnexion',
+            tooltip: appLocalizations.logout, // Translated tooltip
           ),
         ],
       ),
@@ -38,9 +59,9 @@ class SuperAdminDashboardScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const Text(
-              'Bienvenue, Super Admin!',
-              style: TextStyle(
+            Text(
+              appLocalizations.helloAdmin(AppLocalizations.of(context)!.appTitle.split(' ')[0]), // Example: "Hello, Admin!"
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -50,60 +71,57 @@ class SuperAdminDashboardScreen extends StatelessWidget {
 
             // --- Section Statistiques (Exemple) ---
             GridView.count(
-              crossAxisCount: 2, // 2 cartes par ligne
-              shrinkWrap: true, // Pour que le GridView s'adapte à son contenu
-              physics: const NeverScrollableScrollPhysics(), // Désactive le défilement du GridView
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               children: <Widget>[
-                _buildInfoCard(context, 'Total Structures', '15', Icons.apartment),
-                _buildInfoCard(context, 'Total Admins', '5', Icons.people),
-                _buildInfoCard(context, 'Paiements Aujourd\'hui', 'XAF 1.2M', Icons.payments),
-                _buildInfoCard(context, 'Services Actifs', '50+', Icons.miscellaneous_services),
+                _buildInfoCard(context, appLocalizations.totalStructures, '15', Icons.apartment),
+                _buildInfoCard(context, appLocalizations.totalAdmins, '5', Icons.people),
+                _buildInfoCard(context, appLocalizations.paymentsToday, 'XAF 1.2M', Icons.payments),
+                _buildInfoCard(context, appLocalizations.activeServices, '50+', Icons.miscellaneous_services),
               ],
             ),
             const SizedBox(height: 40),
 
             // --- Section Navigation Rapide ---
-            const Text(
-              'Actions Rapides',
-              style: TextStyle(
+            Text(
+              appLocalizations.quickActions,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
             ),
             const SizedBox(height: 20),
-           _buildActionButton(
-  context,
-  'Gérer les Admins',
-  Icons.admin_panel_settings,
-  () {
-    // Naviguer vers l'écran de gestion des Admins
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const AdminManagementScreen()),
-    );
-  },
-),
-            const SizedBox(height: 15),
-           _buildActionButton(
-  context,
-  'Gérer les Structures',
-  Icons.corporate_fare,
-  () {
-    // Naviguer vers l'écran de gestion des Structures
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const StructureManagementScreen()),
-    );
-  },
-),
+            _buildActionButton(
+              context,
+              appLocalizations.manageAdmins,
+              Icons.admin_panel_settings,
+                  () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const AdminManagementScreen()),
+                );
+              },
+            ),
             const SizedBox(height: 15),
             _buildActionButton(
               context,
-              'Voir tous les Paiements',
+              appLocalizations.manageStructures,
+              Icons.corporate_fare,
+                  () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const StructureManagementScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: 15),
+            _buildActionButton(
+              context,
+              appLocalizations.viewAllPayments,
               Icons.receipt_long,
-              () {
-                // Naviguer vers l'écran de vue globale des Paiements
+                  () {
                 print('Naviguer vers Voir tous les Paiements');
                 // TODO: Implémenter la navigation vers GlobalPaymentsScreen
               },
@@ -114,7 +132,6 @@ class SuperAdminDashboardScreen extends StatelessWidget {
     );
   }
 
-  // Widget utilitaire pour les cartes d'information
   Widget _buildInfoCard(BuildContext context, String title, String value, IconData icon) {
     return Card(
       elevation: 4,
@@ -142,7 +159,6 @@ class SuperAdminDashboardScreen extends StatelessWidget {
     );
   }
 
-  // Widget utilitaire pour les boutons d'action
   Widget _buildActionButton(BuildContext context, String title, IconData icon, VoidCallback onPressed) {
     return Card(
       elevation: 2,

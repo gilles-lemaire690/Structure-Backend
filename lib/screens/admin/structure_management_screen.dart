@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:structure_front/models/structure.dart'; // Importez le modèle de structure
+import 'package:structure_front/l10n/app_localizations.dart';
+import 'package:structure_front/models/structure.dart';
+
 
 class StructureManagementScreen extends StatefulWidget {
   const StructureManagementScreen({super.key});
@@ -58,27 +60,29 @@ class _StructureManagementScreenState extends State<StructureManagementScreen> {
       print('Structure avec ID $id supprimée.');
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Structure supprimée avec succès.')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.structureDeletedSuccessfully)), // Translated text
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!; // Access translations
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          'Gérer les Structures',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          appLocalizations.manageStructuresTitle, // Translated title
+          style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.blueGrey[700],
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: _structures.isEmpty
-          ? const Center(
+          ? Center(
               child: Text(
-                'Aucune structure enregistrée pour l\'instant.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                appLocalizations.noStructuresRecorded, // Translated text
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
             )
           : ListView.builder(
@@ -110,12 +114,12 @@ class _StructureManagementScreenState extends State<StructureManagementScreen> {
                               ),
                               if (structure.contactEmail != null && structure.contactEmail!.isNotEmpty)
                                 Text(
-                                  'Email: ${structure.contactEmail}',
+                                  '${appLocalizations.emailLabel}: ${structure.contactEmail}', // Translated label
                                   style: TextStyle(fontSize: 14, color: Colors.blueGrey[600]),
                                 ),
                               if (structure.contactPhone != null && structure.contactPhone!.isNotEmpty)
                                 Text(
-                                  'Tél: ${structure.contactPhone}',
+                                  '${appLocalizations.phoneNumber}: ${structure.contactPhone}', // Translated label
                                   style: TextStyle(fontSize: 14, color: Colors.blueGrey[600]),
                                 ),
                             ],
@@ -200,10 +204,12 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!; // Access translations
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.structure == null ? 'Ajouter une Structure' : 'Modifier la Structure',
+          widget.structure == null ? appLocalizations.addStructure : appLocalizations.editStructure, // Translated title
           style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.blueGrey[700],
@@ -219,12 +225,12 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  labelText: 'Nom de la Structure',
+                  labelText: appLocalizations.nameOfStructure, // Translated label
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer le nom de la structure';
+                    return appLocalizations.enterStructureName; // Translated message
                   }
                   return null;
                 },
@@ -233,12 +239,13 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
               TextFormField(
                 controller: _typeController,
                 decoration: InputDecoration(
-                  labelText: 'Type de Structure (Ex: Santé, Éducation)',
+                  labelText: appLocalizations.typeOfStructure, // Translated label
+                  hintText: 'Ex: Santé, Éducation',
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer le type de structure';
+                    return appLocalizations.enterStructureType; // Translated message
                   }
                   return null;
                 },
@@ -247,12 +254,13 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
               TextFormField(
                 controller: _locationController,
                 decoration: InputDecoration(
-                  labelText: 'Localisation (Ex: Yaoundé, Douala)',
+                  labelText: appLocalizations.location, // Translated label
+                  hintText: 'Ex: Yaoundé, Douala',
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer la localisation';
+                    return appLocalizations.enterLocation; // Translated message
                   }
                   return null;
                 },
@@ -262,7 +270,7 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  labelText: 'E-mail de Contact (Optionnel)',
+                  labelText: appLocalizations.contactEmailOptional, // Translated label
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
@@ -271,7 +279,7 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
-                  labelText: 'Téléphone de Contact (Optionnel)',
+                  labelText: appLocalizations.contactPhoneOptional, // Translated label
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
@@ -288,7 +296,7 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
                     ),
                   ),
                   child: Text(
-                    widget.structure == null ? 'Ajouter la Structure' : 'Mettre à jour',
+                    widget.structure == null ? appLocalizations.addStructureButton : appLocalizations.updateButton, // Translated text
                     style: const TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),

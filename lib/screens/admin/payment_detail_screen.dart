@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:structure_front/l10n/app_localizations.dart';
 import 'package:structure_front/models/payment.dart';
-import 'package:url_launcher/url_launcher.dart'; // Importez le package
+import 'package:url_launcher/url_launcher.dart';
+
 
 class PaymentDetailScreen extends StatelessWidget {
   final Payment payment;
 
   const PaymentDetailScreen({super.key, required this.payment});
 
-  // Fonction pour lancer le téléchargement/ouverture du reçu
-  // Le BuildContext est maintenant passé en paramètre
   void _downloadReceipt(BuildContext context) async {
     final Uri url = Uri.parse(payment.receiptUrl);
-    // Utilisez `launchUrl` directement comme une fonction statique
-    if (await launchUrl(url)) { // canLaunchUrl est déprécié, launchUrl retourne directement un booléen
+    if (await launchUrl(url)) {
       print('Tentative d\'ouverture du reçu: ${payment.receiptUrl}');
     } else {
       print('Impossible de lancer l\'URL: ${payment.receiptUrl}');
-      // Afficher un message d'erreur à l'utilisateur
-      ScaffoldMessenger.of(context).showSnackBar( // Utilisez le context passé en paramètre
-        const SnackBar(content: Text('Impossible d\'ouvrir le reçu. Vérifiez l\'URL.')),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.couldNotOpenReceipt)), // Translated text
       );
     }
   }
 
   @override
-  Widget build(BuildContext context) { // Le build method a déjà le context
+  Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!; // Access translations
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          'Détails du Paiement',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          appLocalizations.paymentDetails, // Translated title
+          style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.blueGrey[700],
         iconTheme: const IconThemeData(color: Colors.white),
@@ -41,36 +41,36 @@ class PaymentDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             // --- Section Informations sur le Paiement ---
-            _buildSectionTitle('Informations du Paiement'),
+            _buildSectionTitle(appLocalizations.paymentDetails), // Translated title
             const SizedBox(height: 10),
-            _buildDetailRow('ID de Transaction:', payment.id),
-            _buildDetailRow('Montant:', 'XAF ${payment.amount.toStringAsFixed(0)}'),
-            _buildDetailRow('Date:', '${payment.date.day}/${payment.date.month}/${payment.date.year} ${payment.date.hour}:${payment.date.minute.toString().padLeft(2, '0')}'),
-            _buildDetailRow('Méthode de Paiement:', payment.paymentMethod),
+            _buildDetailRow(appLocalizations.transactionId, payment.id), // Translated label
+            _buildDetailRow(appLocalizations.amount, 'XAF ${payment.amount.toStringAsFixed(0)}'), // Translated label
+            _buildDetailRow(appLocalizations.date, '${payment.date.day}/${payment.date.month}/${payment.date.year} ${payment.date.hour}:${payment.date.minute.toString().padLeft(2, '0')}'), // Translated label
+            _buildDetailRow(appLocalizations.paymentMethod, payment.paymentMethod), // Translated label
             const SizedBox(height: 30),
 
             // --- Section Informations sur le Client ---
-            _buildSectionTitle('Informations du Client'),
+            _buildSectionTitle(appLocalizations.clientInfo), // Translated title
             const SizedBox(height: 10),
-            _buildDetailRow('Nom du Client:', payment.clientName),
-            _buildDetailRow('Numéro de Téléphone:', '+237 6XXXXXXXX'), // Placeholder
+            _buildDetailRow(appLocalizations.clientName, payment.clientName), // Translated label
+            _buildDetailRow(appLocalizations.phoneNumber, '+237 6XXXXXXXX'), // Placeholder // Translated label
             const SizedBox(height: 30),
 
             // --- Section Informations sur le Service/Produit ---
-            _buildSectionTitle('Informations Service/Produit'),
+            _buildSectionTitle(appLocalizations.serviceProductInfo), // Translated title
             const SizedBox(height: 10),
-            _buildDetailRow('Service/Produit:', payment.serviceName),
+            _buildDetailRow(appLocalizations.serviceProduct, payment.serviceName), // Translated label
             const SizedBox(height: 40),
 
             // --- Bouton Télécharger le Reçu ---
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () => _downloadReceipt(context), // Passe le context au onPressed
+                onPressed: () => _downloadReceipt(context),
                 icon: const Icon(Icons.download, color: Colors.white),
-                label: const Text(
-                  'Télécharger le Reçu',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+                label: Text(
+                  appLocalizations.downloadReceipt, // Translated text
+                  style: const TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueGrey[700],

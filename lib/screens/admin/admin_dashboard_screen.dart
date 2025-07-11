@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:structure_front/models/payment.dart'; // Importez le modèle de paiement
-import 'package:structure_front/screens/auth/login_screen.dart'; // Pour la déconnexion
-import 'package:structure_front/screens/admin/payment_detail_screen.dart'; // Importez l'écran de détails du paiement
+import 'package:structure_front/l10n/app_localizations.dart';
+import 'package:structure_front/models/payment.dart';
+import 'package:structure_front/screens/auth/login_screen.dart';
+import 'package:structure_front/screens/admin/payment_detail_screen.dart';
+
+import 'package:structure_front/main.dart'; // Import MyApp to access setLocale
 
 class AdminDashboardScreen extends StatefulWidget {
-  final String adminEmail; // Pour identifier l'admin (pour simuler la structure)
+  final String adminEmail;
 
   const AdminDashboardScreen({super.key, required this.adminEmail});
 
@@ -13,8 +16,7 @@ class AdminDashboardScreen extends StatefulWidget {
 }
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
-  // Simulez les données de la structure et les paiements en fonction de l'admin
-  String _structureName = "Ma Structure"; // Sera mis à jour en fonction de l'admin
+  String _structureName = "Ma Structure";
   List<Payment> _payments = [];
 
   @override
@@ -24,10 +26,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   }
 
   void _loadAdminData() {
-    // Dans une vraie application, vous feriez un appel API ici
-    // pour récupérer les infos de la structure et ses paiements
-    // basées sur l'ID de l'admin ou son email.
-
     if (widget.adminEmail == 'admin1@structureA.com') {
       _structureName = 'Pharmacie Centrale';
       _payments = [
@@ -77,7 +75,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       _payments = [];
     }
 
-    setState(() {}); // Rafraîchit l'interface avec les données chargées
+    setState(() {});
   }
 
   void _logout(BuildContext context) {
@@ -90,7 +88,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Calcul des totaux simulés
+    final appLocalizations = AppLocalizations.of(context)!; // Access translations
+
     double totalAmount = _payments.fold(0.0, (sum, item) => sum + item.amount);
     int totalTransactions = _payments.length;
 
@@ -98,16 +97,33 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: Text(
-          'Tableau de Bord de $_structureName',
+          appLocalizations.adminDashboardTitle( _structureName), // Translated title
           style: const TextStyle(color: Colors.white, fontSize: 18),
         ),
         backgroundColor: Colors.blueGrey[700],
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
+          // Language Selection Button
+          PopupMenuButton<Locale>(
+            icon: const Icon(Icons.language, color: Colors.white),
+            onSelected: (Locale locale) {
+              MyApp.of(context)?.setLocale(locale); // Set the new locale
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<Locale>>[
+              const PopupMenuItem<Locale>(
+                value: Locale('en'),
+                child: Text('English'),
+              ),
+              const PopupMenuItem<Locale>(
+                value: Locale('fr'),
+                child: Text('Français'),
+              ),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () => _logout(context),
-            tooltip: 'Déconnexion',
+            tooltip: appLocalizations.logout, // Translated tooltip
           ),
         ],
       ),
@@ -117,7 +133,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'Bonjour, ${widget.adminEmail.split('@').first} !', // Juste un exemple
+              appLocalizations.helloAdmin(widget.adminEmail.split('@').first),
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -134,17 +150,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               children: <Widget>[
-                _buildInfoCard(context, 'Paiements Totaux', 'XAF ${totalAmount.toStringAsFixed(0)}', Icons.payments),
-                _buildInfoCard(context, 'Transactions', '$totalTransactions', Icons.receipt_long),
-                // Ajoutez d'autres stats si besoin
+                _buildInfoCard(context, appLocalizations.totalPayments, 'XAF ${totalAmount.toStringAsFixed(0)}', Icons.payments),
+                _buildInfoCard(context, appLocalizations.transactions, '$totalTransactions', Icons.receipt_long),
               ],
             ),
             const SizedBox(height: 40),
 
             // --- Historique des Paiements ---
-            const Text(
-              'Historique des Paiements',
-              style: TextStyle(
+            Text(
+              appLocalizations.paymentHistory,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -152,12 +167,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             ),
             const SizedBox(height: 20),
             _payments.isEmpty
-                ? const Center(
+                ? Center(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 40.0),
+                      padding: const EdgeInsets.symmetric(vertical: 40.0),
                       child: Text(
-                        'Aucun paiement enregistré pour cette structure.',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                        appLocalizations.noPaymentsRecorded,
+                        style: const TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     ),
                   )
@@ -182,11 +197,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
-                            'Montant: XAF ${payment.amount.toStringAsFixed(0)}\nMéthode: ${payment.paymentMethod}\nDate: ${payment.date.day}/${payment.date.month}/${payment.date.year}',
+                            '${appLocalizations.amount}: XAF ${payment.amount.toStringAsFixed(0)}\n${appLocalizations.paymentMethod}: ${payment.paymentMethod}\n${appLocalizations.date}: ${payment.date.day}/${payment.date.month}/${payment.date.year}',
                           ),
                           trailing: const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
                           onTap: () {
-                            // NAVIGUER VERS L'ÉCRAN DE DÉTAILS DU PAIEMENT
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) => PaymentDetailScreen(payment: payment),
@@ -203,7 +217,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 
-  // Widget utilitaire pour les cartes d'information (copié de SuperAdminDashboard)
   Widget _buildInfoCard(BuildContext context, String title, String value, IconData icon) {
     return Card(
       elevation: 4,
