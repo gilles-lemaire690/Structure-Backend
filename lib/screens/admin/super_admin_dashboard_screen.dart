@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:structure_front/screens/auth/login_screen.dart'; // Pour la déconnexion
 import 'package:structure_front/screens/admin/admin_management_screen.dart'; // <-- Ajoutez cette ligne
 import 'package:structure_front/screens/admin/structure_management_screen.dart'; // Ajoutez cette ligne
+
 class SuperAdminDashboardScreen extends StatelessWidget {
   const SuperAdminDashboardScreen({super.key});
 
@@ -52,14 +53,30 @@ class SuperAdminDashboardScreen extends StatelessWidget {
             GridView.count(
               crossAxisCount: 2, // 2 cartes par ligne
               shrinkWrap: true, // Pour que le GridView s'adapte à son contenu
-              physics: const NeverScrollableScrollPhysics(), // Désactive le défilement du GridView
+              physics:
+                  const NeverScrollableScrollPhysics(), // Désactive le défilement du GridView
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               children: <Widget>[
-                _buildInfoCard(context, 'Total Structures', '15', Icons.apartment),
+                _buildInfoCard(
+                  context,
+                  'Total Structures',
+                  '15',
+                  Icons.apartment,
+                ),
                 _buildInfoCard(context, 'Total Admins', '5', Icons.people),
-                _buildInfoCard(context, 'Paiements Aujourd\'hui', 'XAF 1.2M', Icons.payments),
-                _buildInfoCard(context, 'Services Actifs', '50+', Icons.miscellaneous_services),
+                _buildInfoCard(
+                  context,
+                  'Paiements Aujourd\'hui',
+                  'XAF 1.2M',
+                  Icons.payments,
+                ),
+                _buildInfoCard(
+                  context,
+                  'Services Actifs',
+                  '50+',
+                  Icons.miscellaneous_services,
+                ),
               ],
             ),
             const SizedBox(height: 40),
@@ -74,29 +91,34 @@ class SuperAdminDashboardScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-           _buildActionButton(
-  context,
-  'Gérer les Admins',
-  Icons.admin_panel_settings,
-  () {
-    // Naviguer vers l'écran de gestion des Admins
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const AdminManagementScreen()),
-    );
-  },
-),
+            _buildActionButton(
+              context,
+              'Gérer les Admins',
+              Icons.admin_panel_settings,
+              () {
+                // Naviguer vers l'écran de gestion des Admins
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const AdminManagementScreen(),
+                  ),
+                );
+              },
+            ),
             const SizedBox(height: 15),
-           _buildActionButton(
-  context,
-  'Gérer les Structures',
-  Icons.corporate_fare,
-  () {
-    // Naviguer vers l'écran de gestion des Structures
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const StructureManagementScreen()),
-    );
-  },
-),
+            _buildActionButton(
+              context,
+              'Gérer les Structures',
+              Icons.corporate_fare, // Icône pour les structures
+              () {
+                // Naviguer vers l'écran de gestion des Structures
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const StructureManagementScreen(),
+                  ),
+                );
+              },
+            ),
+
             const SizedBox(height: 15),
             _buildActionButton(
               context,
@@ -115,7 +137,12 @@ class SuperAdminDashboardScreen extends StatelessWidget {
   }
 
   // Widget utilitaire pour les cartes d'information
-  Widget _buildInfoCard(BuildContext context, String title, String value, IconData icon) {
+  Widget _buildInfoCard(
+    BuildContext context,
+    String title,
+    String value,
+    IconData icon,
+  ) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -134,7 +161,11 @@ class SuperAdminDashboardScreen extends StatelessWidget {
             const SizedBox(height: 5),
             Text(
               value,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
           ],
         ),
@@ -143,7 +174,12 @@ class SuperAdminDashboardScreen extends StatelessWidget {
   }
 
   // Widget utilitaire pour les boutons d'action
-  Widget _buildActionButton(BuildContext context, String title, IconData icon, VoidCallback onPressed) {
+  Widget _buildActionButton(
+    BuildContext context,
+    String title,
+    IconData icon,
+    VoidCallback onPressed,
+  ) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

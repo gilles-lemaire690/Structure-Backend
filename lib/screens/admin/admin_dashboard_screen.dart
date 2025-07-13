@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:structure_front/models/payment.dart'; // Importez le modèle de paiement
 import 'package:structure_front/screens/auth/login_screen.dart'; // Pour la déconnexion
 import 'package:structure_front/screens/admin/payment_detail_screen.dart'; // Importez l'écran de détails du paiement
+import 'package:structure_front/screens/admin/service_product_management_screen.dart'; // NOUVEL IMPORT pour la gestion des services/produits
+import 'package:structure_front/themes/app_theme.dart'; // NOUVEL IMPORT pour la gestion des thèmes
 
 class AdminDashboardScreen extends StatefulWidget {
-  final String adminEmail; // Pour identifier l'admin (pour simuler la structure)
+  final String
+  adminEmail; // Pour identifier l'admin (pour simuler la structure)
 
   const AdminDashboardScreen({super.key, required this.adminEmail});
 
@@ -14,7 +17,10 @@ class AdminDashboardScreen extends StatefulWidget {
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   // Simulez les données de la structure et les paiements en fonction de l'admin
-  String _structureName = "Ma Structure"; // Sera mis à jour en fonction de l'admin
+  String _structureName =
+      "Ma Structure"; // Sera mis à jour en fonction de l'admin
+  String _currentStructureId =
+      ''; // NOUVEAU: Variable pour stocker l'ID de la structure de l'Admin
   List<Payment> _payments = [];
 
   @override
@@ -30,6 +36,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
     if (widget.adminEmail == 'admin1@structureA.com') {
       _structureName = 'Pharmacie Centrale';
+      _currentStructureId = 'S001'; // ID de structure simulé
       _payments = [
         Payment(
           id: 'P001',
@@ -52,6 +59,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       ];
     } else if (widget.adminEmail == 'admin2@structureB.com') {
       _structureName = 'École Primaire Les Génies';
+      _currentStructureId = 'S002'; // ID de structure simulé
       _payments = [
         Payment(
           id: 'P003',
@@ -74,6 +82,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       ];
     } else {
       _structureName = 'Structure Inconnue';
+      _currentStructureId = ''; // Pas de structure associée
       _payments = [];
     }
 
@@ -95,17 +104,25 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     int totalTransactions = _payments.length;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
         title: Text(
           'Tableau de Bord de $_structureName',
-          style: const TextStyle(color: Colors.white, fontSize: 18),
+          style: const TextStyle(color: Colors.black87, fontSize: 18),
         ),
-        backgroundColor: Colors.blueGrey[700],
+        backgroundColor: AppTheme.primaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryColor,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+            ),
             onPressed: () => _logout(context),
             tooltip: 'Déconnexion',
           ),
@@ -134,13 +151,62 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               children: <Widget>[
-                _buildInfoCard(context, 'Paiements Totaux', 'XAF ${totalAmount.toStringAsFixed(0)}', Icons.payments),
-                _buildInfoCard(context, 'Transactions', '$totalTransactions', Icons.receipt_long),
+                _buildInfoCard(
+                  context,
+                  'Paiements Totaux',
+                  'XAF ${totalAmount.toStringAsFixed(0)}',
+                  Icons.payments,
+                ),
+                _buildInfoCard(
+                  context,
+                  'Transactions',
+                  '$totalTransactions',
+                  Icons.receipt_long,
+                ),
                 // Ajoutez d'autres stats si besoin
               ],
             ),
             const SizedBox(height: 40),
 
+            // --- Nouvelle Section: Gestion de la Structure (AJOUTÉE) ---
+            const Text(
+              'Gestion de ma Structure',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 20),
+            _buildActionButton(
+              context,
+              'Gérer Services & Produits',
+              Icons.assignment, // Icône pour les services/produits
+              () {
+                // Naviguer vers l'écran de gestion des services/produits
+                if (_currentStructureId.isNotEmpty) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ServiceProductManagementScreen(
+                        structureId: _currentStructureId,
+                        structureName: _structureName,
+                      ),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Aucune structure associée pour gérer les services.',
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+            const SizedBox(
+              height: 40,
+            ), // Espace avant l'historique des paiements
             // --- Historique des Paiements ---
             const Text(
               'Historique des Paiements',
@@ -170,12 +236,17 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       return Card(
                         elevation: 3,
                         margin: const EdgeInsets.symmetric(vertical: 8.0),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         child: ListTile(
                           contentPadding: const EdgeInsets.all(12),
                           leading: CircleAvatar(
                             backgroundColor: Colors.blueGrey[100],
-                            child: Icon(Icons.money, color: Colors.blueGrey[700]),
+                            child: Icon(
+                              Icons.money,
+                              color: Colors.blueGrey[700],
+                            ),
                           ),
                           title: Text(
                             '${payment.serviceName} - ${payment.clientName}',
@@ -184,12 +255,17 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                           subtitle: Text(
                             'Montant: XAF ${payment.amount.toStringAsFixed(0)}\nMéthode: ${payment.paymentMethod}\nDate: ${payment.date.day}/${payment.date.month}/${payment.date.year}',
                           ),
-                          trailing: const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 18,
+                            color: Colors.grey,
+                          ),
                           onTap: () {
                             // NAVIGUER VERS L'ÉCRAN DE DÉTAILS DU PAIEMENT
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => PaymentDetailScreen(payment: payment),
+                                builder: (context) =>
+                                    PaymentDetailScreen(payment: payment),
                               ),
                             );
                           },
@@ -204,7 +280,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   }
 
   // Widget utilitaire pour les cartes d'information (copié de SuperAdminDashboard)
-  Widget _buildInfoCard(BuildContext context, String title, String value, IconData icon) {
+  Widget _buildInfoCard(
+    BuildContext context,
+    String title,
+    String value,
+    IconData icon,
+  ) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -223,9 +304,45 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             const SizedBox(height: 5),
             Text(
               value,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // Widget utilitaire pour les boutons d'action (copié de SuperAdminDashboard)
+  Widget _buildActionButton(
+    BuildContext context,
+    String title,
+    IconData icon,
+    VoidCallback onPressed,
+  ) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+          child: Row(
+            children: [
+              Icon(icon, size: 30, color: Colors.blueGrey[700]),
+              const SizedBox(width: 15),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 18, color: Colors.black87),
+              ),
+              const Spacer(),
+              const Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
+            ],
+          ),
         ),
       ),
     );

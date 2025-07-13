@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:structure_front/screens/admin/super_admin_dashboard_screen.dart';
 import 'package:structure_front/screens/admin/admin_dashboard_screen.dart';
+import 'package:structure_front/themes/app_theme.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -21,40 +23,40 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() {
-  final String email = _emailController.text;
-  final String password = _passwordController.text;
+    final String email = _emailController.text;
+    final String password = _passwordController.text;
 
-  print('Tentative de connexion...');
-  print('Email: $email');
-  print('Password: $password');
+    print('Tentative de connexion...');
+    print('Email: $email');
+    print('Password: $password');
 
-  // Simuler la connexion en fonction des identifiants
-  if (email == 'superadmin@example.com' && password == 'password') {
-    print('Connexion Super Admin réussie !');
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const SuperAdminDashboardScreen(),
-      ),
-    );
-  } else if (email.startsWith('admin') && password == 'password') { // Exemple: admin1@structureA.com, admin2@structureB.com
-    print('Connexion Admin réussie !');
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => AdminDashboardScreen(adminEmail: email), // Passe l'email à l'AdminDashboard
-      ),
-    );
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('E-mail ou mot de passe incorrect.')),
-    );
-    print('Échec de la connexion.');
+    // Simuler la connexion en fonction des identifiants
+    if (email == 'superadmin@example.com' && password == 'password') {
+      print('Connexion Super Admin réussie !');
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const SuperAdminDashboardScreen(),
+        ),
+      );
+    } else if (email.startsWith('admin') && password == 'password') { // Exemple: admin1@structureA.com, admin2@structureB.com
+      print('Connexion Admin réussie !');
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => AdminDashboardScreen(adminEmail: email), // Passe l'email à l'AdminDashboard
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('E-mail ou mot de passe incorrect.')),
+      );
+      print('Échec de la connexion.');
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50], // Fond gris très clair
+      backgroundColor: AppTheme.backgroundColor,
       body: Center(
         child: SingleChildScrollView( // Permet le défilement si le clavier apparaît
           padding: const EdgeInsets.all(24.0),
@@ -67,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const Icon(
                 Icons.business, // Icône temporaire, remplacez par votre logo
                 size: 80,
-                color: Colors.blueGrey,
+                color: AppTheme.primaryColor,
               ),
               const SizedBox(height: 20),
               const Text(
@@ -75,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: AppTheme.primaryColor,
                 ),
               ),
               const SizedBox(height: 40),
@@ -90,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  prefixIcon: const Icon(Icons.email, color: Colors.blueGrey),
+                  prefixIcon: const Icon(Icons.email, color: AppTheme.primaryColor),
                   filled: true,
                   fillColor: Colors.white,
                 ),
@@ -107,11 +109,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  prefixIcon: const Icon(Icons.lock, color: Colors.blueGrey),
+                  prefixIcon: const Icon(Icons.lock, color: AppTheme.primaryColor),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscureText ? Icons.visibility : Icons.visibility_off,
-                      color: Colors.blueGrey,
+                      color: AppTheme.primaryColor,
                     ),
                     onPressed: () {
                       setState(() {
@@ -135,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: const Text(
                     'Mot de passe oublié ?',
-                    style: TextStyle(color: Colors.blueGrey),
+                    style: TextStyle(color: AppTheme.primaryColor),
                   ),
                 ),
               ),
@@ -147,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ElevatedButton(
                   onPressed: _login,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey[700], // Couleur de bouton plus foncée et sobre
+                    backgroundColor: AppTheme.primaryColor, // Couleur de bouton plus foncée et sobre
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),

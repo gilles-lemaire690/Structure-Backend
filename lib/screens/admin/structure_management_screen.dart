@@ -1,3 +1,4 @@
+// lib/screens/admin/structure_management_screen.dart
 import 'package:flutter/material.dart';
 import 'package:structure_front/models/structure.dart'; // Importez le modèle de structure
 
@@ -5,15 +6,34 @@ class StructureManagementScreen extends StatefulWidget {
   const StructureManagementScreen({super.key});
 
   @override
-  State<StructureManagementScreen> createState() => _StructureManagementScreenState();
+  State<StructureManagementScreen> createState() =>
+      _StructureManagementScreenState();
 }
 
 class _StructureManagementScreenState extends State<StructureManagementScreen> {
   // Liste simulée de structures
+  // Dans une vraie application, cette liste viendrait d'une API backend.
   List<Structure> _structures = [
-    Structure(id: 'S001', name: 'Hôpital Central', type: 'Santé', location: 'Yaoundé', contactEmail: 'contact@hopital-central.cm'),
-    Structure(id: 'S002', name: 'Université de Douala', type: 'Éducation', location: 'Douala', contactEmail: 'info@univ-douala.cm'),
-    Structure(id: 'S003', name: 'Supermarché Express', type: 'Commerce', location: 'Bafoussam'),
+    Structure(
+      id: 'S001',
+      name: 'Hôpital Central',
+      type: 'Santé',
+      location: 'Yaoundé',
+      contactEmail: 'contact@hopital-central.cm',
+    ),
+    Structure(
+      id: 'S002',
+      name: 'Université de Douala',
+      type: 'Éducation',
+      location: 'Douala',
+      contactEmail: 'info@univ-douala.cm',
+    ),
+    Structure(
+      id: 'S003',
+      name: 'Supermarché Express',
+      type: 'Commerce',
+      location: 'Bafoussam',
+    ),
   ];
 
   void _addStructure() {
@@ -40,12 +60,16 @@ class _StructureManagementScreenState extends State<StructureManagementScreen> {
           structure: structure, // Passe la structure à modifier
           onSave: (updatedStructure) {
             setState(() {
-              int index = _structures.indexWhere((s) => s.id == updatedStructure.id);
+              int index = _structures.indexWhere(
+                (s) => s.id == updatedStructure.id,
+              );
               if (index != -1) {
                 _structures[index] = updatedStructure;
               }
             });
-            Navigator.of(context).pop(); // Revenir à la liste après modification
+            Navigator.of(
+              context,
+            ).pop(); // Revenir à la liste après modification
           },
         ),
       ),
@@ -89,7 +113,9 @@ class _StructureManagementScreenState extends State<StructureManagementScreen> {
                 return Card(
                   elevation: 3,
                   margin: const EdgeInsets.symmetric(vertical: 8.0),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Row(
@@ -101,22 +127,35 @@ class _StructureManagementScreenState extends State<StructureManagementScreen> {
                               Text(
                                 structure.name,
                                 style: const TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 'Type: ${structure.type} | Localisation: ${structure.location}',
-                                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
+                                ),
                               ),
-                              if (structure.contactEmail != null && structure.contactEmail!.isNotEmpty)
+                              if (structure.contactEmail != null &&
+                                  structure.contactEmail!.isNotEmpty)
                                 Text(
                                   'Email: ${structure.contactEmail}',
-                                  style: TextStyle(fontSize: 14, color: Colors.blueGrey[600]),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.blueGrey[600],
+                                  ),
                                 ),
-                              if (structure.contactPhone != null && structure.contactPhone!.isNotEmpty)
+                              if (structure.contactPhone != null &&
+                                  structure.contactPhone!.isNotEmpty)
                                 Text(
                                   'Tél: ${structure.contactPhone}',
-                                  style: TextStyle(fontSize: 14, color: Colors.blueGrey[600]),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.blueGrey[600],
+                                  ),
                                 ),
                             ],
                           ),
@@ -126,7 +165,10 @@ class _StructureManagementScreenState extends State<StructureManagementScreen> {
                           onPressed: () => _editStructure(structure),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.redAccent),
+                          icon: const Icon(
+                            Icons.delete,
+                            color: Colors.redAccent,
+                          ),
                           onPressed: () => _deleteStructure(structure.id),
                         ),
                       ],
@@ -143,7 +185,6 @@ class _StructureManagementScreenState extends State<StructureManagementScreen> {
     );
   }
 }
-
 
 // --- Formulaire pour ajouter/modifier une structure ---
 class StructureFormScreen extends StatefulWidget {
@@ -169,9 +210,15 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
     super.initState();
     _nameController = TextEditingController(text: widget.structure?.name ?? '');
     _typeController = TextEditingController(text: widget.structure?.type ?? '');
-    _locationController = TextEditingController(text: widget.structure?.location ?? '');
-    _emailController = TextEditingController(text: widget.structure?.contactEmail ?? '');
-    _phoneController = TextEditingController(text: widget.structure?.contactPhone ?? '');
+    _locationController = TextEditingController(
+      text: widget.structure?.location ?? '',
+    );
+    _emailController = TextEditingController(
+      text: widget.structure?.contactEmail ?? '',
+    );
+    _phoneController = TextEditingController(
+      text: widget.structure?.contactPhone ?? '',
+    );
   }
 
   @override
@@ -187,12 +234,19 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       final newStructure = Structure(
-        id: widget.structure?.id ?? DateTime.now().millisecondsSinceEpoch.toString(), // Génère un ID si c'est une nouvelle structure
+        id:
+            widget.structure?.id ??
+            DateTime.now().millisecondsSinceEpoch
+                .toString(), // Génère un ID si c'est une nouvelle structure
         name: _nameController.text,
         type: _typeController.text,
         location: _locationController.text,
-        contactEmail: _emailController.text.isNotEmpty ? _emailController.text : null,
-        contactPhone: _phoneController.text.isNotEmpty ? _phoneController.text : null,
+        contactEmail: _emailController.text.isNotEmpty
+            ? _emailController.text
+            : null,
+        contactPhone: _phoneController.text.isNotEmpty
+            ? _phoneController.text
+            : null,
       );
       widget.onSave(newStructure);
     }
@@ -203,7 +257,9 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.structure == null ? 'Ajouter une Structure' : 'Modifier la Structure',
+          widget.structure == null
+              ? 'Ajouter une Structure'
+              : 'Modifier la Structure',
           style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.blueGrey[700],
@@ -220,7 +276,9 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
                 controller: _nameController,
                 decoration: InputDecoration(
                   labelText: 'Nom de la Structure',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -234,7 +292,9 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
                 controller: _typeController,
                 decoration: InputDecoration(
                   labelText: 'Type de Structure (Ex: Santé, Éducation)',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -248,7 +308,9 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
                 controller: _locationController,
                 decoration: InputDecoration(
                   labelText: 'Localisation (Ex: Yaoundé, Douala)',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -263,7 +325,9 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: 'E-mail de Contact (Optionnel)',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -272,7 +336,9 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
                   labelText: 'Téléphone de Contact (Optionnel)',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
               const SizedBox(height: 30),
@@ -288,7 +354,9 @@ class _StructureFormScreenState extends State<StructureFormScreen> {
                     ),
                   ),
                   child: Text(
-                    widget.structure == null ? 'Ajouter la Structure' : 'Mettre à jour',
+                    widget.structure == null
+                        ? 'Ajouter la Structure'
+                        : 'Mettre à jour',
                     style: const TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
