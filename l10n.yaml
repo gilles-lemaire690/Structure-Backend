@@ -1,3 +1,14 @@
 arb-dir: lib/l10n
-template-arb-file: app_en.arb
+supported-locales:
+  - en
+  - fr
+
+# Fichiers de localisation
+en: app_localizations_en.arb
+fr: app_localizations_fr.arb
+
+# Configuration de la génération
+template-arb-file: app_localizations_en.arb
 output-localization-file: app_localizations.dart
+synthetic-package: false
+use-deferred-loading: false

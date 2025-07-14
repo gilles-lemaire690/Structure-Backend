@@ -98,71 +98,11 @@ abstract class AppLocalizations {
     Locale('fr'),
   ];
 
-  /// The title of the application
+  /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'Admin Dashboard'**
+  /// **'Structure Front'**
   String get appTitle;
-
-  /// Greeting message to admin
-  ///
-  /// In en, this message translates to:
-  /// **'Hello, {name}!'**
-  String helloAdmin(String name);
-
-  /// No description provided for @totalStructures.
-  ///
-  /// In en, this message translates to:
-  /// **'Total Structures'**
-  String get totalStructures;
-
-  /// No description provided for @totalAdmins.
-  ///
-  /// In en, this message translates to:
-  /// **'Total Admins'**
-  String get totalAdmins;
-
-  /// No description provided for @paymentsToday.
-  ///
-  /// In en, this message translates to:
-  /// **'Payments Today'**
-  String get paymentsToday;
-
-  /// No description provided for @activeServices.
-  ///
-  /// In en, this message translates to:
-  /// **'Active Services'**
-  String get activeServices;
-
-  /// No description provided for @quickActions.
-  ///
-  /// In en, this message translates to:
-  /// **'Quick Actions'**
-  String get quickActions;
-
-  /// No description provided for @manageAdmins.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage Admins'**
-  String get manageAdmins;
-
-  /// No description provided for @manageStructures.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage Structures'**
-  String get manageStructures;
-
-  /// No description provided for @viewAllPayments.
-  ///
-  /// In en, this message translates to:
-  /// **'View All Payments'**
-  String get viewAllPayments;
-
-  /// No description provided for @logout.
-  ///
-  /// In en, this message translates to:
-  /// **'Logout'**
-  String get logout;
 
   /// No description provided for @loginScreenTitle.
   ///
@@ -173,7 +113,7 @@ abstract class AppLocalizations {
   /// No description provided for @emailLabel.
   ///
   /// In en, this message translates to:
-  /// **'E-mail'**
+  /// **'Email'**
   String get emailLabel;
 
   /// No description provided for @passwordLabel.
@@ -182,29 +122,89 @@ abstract class AppLocalizations {
   /// **'Password'**
   String get passwordLabel;
 
-  /// No description provided for @forgotPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot Password?'**
-  String get forgotPassword;
-
   /// No description provided for @signIn.
   ///
   /// In en, this message translates to:
   /// **'Sign In'**
   String get signIn;
 
-  /// No description provided for @incorrectEmailPassword.
+  /// No description provided for @helloAdmin.
   ///
   /// In en, this message translates to:
-  /// **'Incorrect email or password.'**
-  String get incorrectEmailPassword;
+  /// **'Welcome, {name}!'**
+  String helloAdmin(Object name);
 
-  /// Title for admin dashboard
+  /// No description provided for @quickActions.
   ///
   /// In en, this message translates to:
-  /// **'Dashboard of {structureName}'**
-  String adminDashboardTitle(String structureName);
+  /// **'Quick Actions'**
+  String get quickActions;
+
+  /// No description provided for @paymentHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment History'**
+  String get paymentHistory;
+
+  /// No description provided for @noPaymentsRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'No payments recorded'**
+  String get noPaymentsRecorded;
+
+  /// No description provided for @amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amount;
+
+  /// No description provided for @paymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Method'**
+  String get paymentMethod;
+
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// No description provided for @viewAllPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'View All Payments'**
+  String get viewAllPayments;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// No description provided for @french.
+  ///
+  /// In en, this message translates to:
+  /// **'French'**
+  String get french;
+
+  /// No description provided for @structureManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Structure Management'**
+  String get structureManagement;
 
   /// No description provided for @totalPayments.
   ///
@@ -218,119 +218,41 @@ abstract class AppLocalizations {
   /// **'Transactions'**
   String get transactions;
 
-  /// No description provided for @paymentHistory.
+  /// No description provided for @manageServicesProducts.
   ///
   /// In en, this message translates to:
-  /// **'Payment History'**
-  String get paymentHistory;
+  /// **'Manage Services & Products'**
+  String get manageServicesProducts;
 
-  /// No description provided for @noPaymentsRecorded.
+  /// No description provided for @adminDeletedSuccessfully.
   ///
   /// In en, this message translates to:
-  /// **'No payments recorded for this structure.'**
-  String get noPaymentsRecorded;
+  /// **'Administrator deleted successfully'**
+  String get adminDeletedSuccessfully;
 
-  /// No description provided for @paymentDetails.
+  /// No description provided for @manageAdmins.
   ///
   /// In en, this message translates to:
-  /// **'Payment Details'**
-  String get paymentDetails;
+  /// **'Manage Administrators'**
+  String get manageAdmins;
 
-  /// No description provided for @transactionId.
+  /// No description provided for @noAdminsRecorded.
   ///
   /// In en, this message translates to:
-  /// **'Transaction ID:'**
-  String get transactionId;
+  /// **'No administrators recorded'**
+  String get noAdminsRecorded;
 
-  /// No description provided for @amount.
+  /// No description provided for @attachedStructure.
   ///
   /// In en, this message translates to:
-  /// **'Amount:'**
-  String get amount;
+  /// **'Attached Structure'**
+  String get attachedStructure;
 
-  /// No description provided for @date.
+  /// No description provided for @selectStructure.
   ///
   /// In en, this message translates to:
-  /// **'Date:'**
-  String get date;
-
-  /// No description provided for @paymentMethod.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment Method:'**
-  String get paymentMethod;
-
-  /// No description provided for @clientInfo.
-  ///
-  /// In en, this message translates to:
-  /// **'Client Information'**
-  String get clientInfo;
-
-  /// No description provided for @clientName.
-  ///
-  /// In en, this message translates to:
-  /// **'Client Name:'**
-  String get clientName;
-
-  /// No description provided for @phoneNumber.
-  ///
-  /// In en, this message translates to:
-  /// **'Phone Number:'**
-  String get phoneNumber;
-
-  /// No description provided for @serviceProductInfo.
-  ///
-  /// In en, this message translates to:
-  /// **'Service/Product Information'**
-  String get serviceProductInfo;
-
-  /// No description provided for @serviceProduct.
-  ///
-  /// In en, this message translates to:
-  /// **'Service/Product:'**
-  String get serviceProduct;
-
-  /// No description provided for @downloadReceipt.
-  ///
-  /// In en, this message translates to:
-  /// **'Download Receipt'**
-  String get downloadReceipt;
-
-  /// No description provided for @couldNotOpenReceipt.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not open receipt. Check URL.'**
-  String get couldNotOpenReceipt;
-
-  /// No description provided for @manageStructuresTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage Structures'**
-  String get manageStructuresTitle;
-
-  /// No description provided for @noStructuresRecorded.
-  ///
-  /// In en, this message translates to:
-  /// **'No structures recorded yet.'**
-  String get noStructuresRecorded;
-
-  /// No description provided for @addStructure.
-  ///
-  /// In en, this message translates to:
-  /// **'Add Structure'**
-  String get addStructure;
-
-  /// No description provided for @editStructure.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit Structure'**
-  String get editStructure;
-
-  /// No description provided for @structureDeletedSuccessfully.
-  ///
-  /// In en, this message translates to:
-  /// **'Structure deleted successfully.'**
-  String get structureDeletedSuccessfully;
+  /// **'Select Structure'**
+  String get selectStructure;
 
   /// No description provided for @addAdministrator.
   ///
@@ -353,19 +275,19 @@ abstract class AppLocalizations {
   /// No description provided for @enterFullName.
   ///
   /// In en, this message translates to:
-  /// **'Please enter full name'**
+  /// **'Please enter your full name'**
   String get enterFullName;
 
   /// No description provided for @enterEmail.
   ///
   /// In en, this message translates to:
-  /// **'Please enter email'**
+  /// **'Please enter your email'**
   String get enterEmail;
 
   /// No description provided for @validEmail.
   ///
   /// In en, this message translates to:
-  /// **'Please enter a valid email address'**
+  /// **'Please enter a valid email'**
   String get validEmail;
 
   /// No description provided for @password.
@@ -377,26 +299,14 @@ abstract class AppLocalizations {
   /// No description provided for @newPasswordHint.
   ///
   /// In en, this message translates to:
-  /// **'New Password (leave empty if unchanged)'**
+  /// **'New Password (leave empty to keep current password)'**
   String get newPasswordHint;
 
   /// No description provided for @enterPassword.
   ///
   /// In en, this message translates to:
-  /// **'Please enter a password'**
+  /// **'Please enter your password'**
   String get enterPassword;
-
-  /// No description provided for @attachedStructure.
-  ///
-  /// In en, this message translates to:
-  /// **'Attached Structure'**
-  String get attachedStructure;
-
-  /// No description provided for @selectStructure.
-  ///
-  /// In en, this message translates to:
-  /// **'Please select a structure'**
-  String get selectStructure;
 
   /// No description provided for @addAdministratorButton.
   ///
@@ -404,47 +314,41 @@ abstract class AppLocalizations {
   /// **'Add Administrator'**
   String get addAdministratorButton;
 
-  /// No description provided for @adminDeletedSuccessfully.
+  /// No description provided for @updateButton.
   ///
   /// In en, this message translates to:
-  /// **'Administrator deleted successfully.'**
-  String get adminDeletedSuccessfully;
+  /// **'Update'**
+  String get updateButton;
 
-  /// No description provided for @noAdminsRecorded.
+  /// No description provided for @structureDeletedSuccessfully.
   ///
   /// In en, this message translates to:
-  /// **'No administrator recorded for now.'**
-  String get noAdminsRecorded;
+  /// **'Structure deleted successfully'**
+  String get structureDeletedSuccessfully;
 
-  /// No description provided for @nameOfStructure.
+  /// No description provided for @manageStructuresTitle.
   ///
   /// In en, this message translates to:
-  /// **'Name of Structure'**
-  String get nameOfStructure;
+  /// **'Manage Structures'**
+  String get manageStructuresTitle;
+
+  /// No description provided for @noStructuresRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'No structures recorded'**
+  String get noStructuresRecorded;
 
   /// No description provided for @enterStructureName.
   ///
   /// In en, this message translates to:
-  /// **'Please enter the name of the structure'**
+  /// **'Please enter the structure name'**
   String get enterStructureName;
-
-  /// No description provided for @typeOfStructure.
-  ///
-  /// In en, this message translates to:
-  /// **'Type of Structure'**
-  String get typeOfStructure;
 
   /// No description provided for @enterStructureType.
   ///
   /// In en, this message translates to:
-  /// **'Please enter the type of structure'**
+  /// **'Please select the structure type'**
   String get enterStructureType;
-
-  /// No description provided for @location.
-  ///
-  /// In en, this message translates to:
-  /// **'Location'**
-  String get location;
 
   /// No description provided for @enterLocation.
   ///
@@ -452,29 +356,65 @@ abstract class AppLocalizations {
   /// **'Please enter the location'**
   String get enterLocation;
 
-  /// No description provided for @contactEmailOptional.
+  /// No description provided for @couldNotOpenReceipt.
   ///
   /// In en, this message translates to:
-  /// **'Contact E-mail (Optional)'**
-  String get contactEmailOptional;
+  /// **'Could not open receipt'**
+  String get couldNotOpenReceipt;
 
-  /// No description provided for @contactPhoneOptional.
+  /// No description provided for @paymentDetails.
   ///
   /// In en, this message translates to:
-  /// **'Contact Phone (Optional)'**
-  String get contactPhoneOptional;
+  /// **'Payment Details'**
+  String get paymentDetails;
 
-  /// No description provided for @addStructureButton.
+  /// No description provided for @transactionId.
   ///
   /// In en, this message translates to:
-  /// **'Add Structure'**
-  String get addStructureButton;
+  /// **'Transaction ID'**
+  String get transactionId;
 
-  /// No description provided for @updateButton.
+  /// No description provided for @clientInfo.
   ///
   /// In en, this message translates to:
-  /// **'Update'**
-  String get updateButton;
+  /// **'Client Information'**
+  String get clientInfo;
+
+  /// No description provided for @clientName.
+  ///
+  /// In en, this message translates to:
+  /// **'Client Name'**
+  String get clientName;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @serviceProductInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Service/Product Information'**
+  String get serviceProductInfo;
+
+  /// No description provided for @serviceProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Service/Product'**
+  String get serviceProduct;
+
+  /// No description provided for @downloadReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Receipt'**
+  String get downloadReceipt;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming Soon'**
+  String get comingSoon;
 }
 
 class _AppLocalizationsDelegate

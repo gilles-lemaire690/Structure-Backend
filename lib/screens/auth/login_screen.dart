@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:structure_front/screens/admin/super_admin_dashboard_screen.dart';
 import 'package:structure_front/screens/admin/admin_dashboard_screen.dart';
 import 'package:structure_front/themes/app_theme.dart';
+import 'package:structure_front/l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -55,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Suppression de la localisation pour le moment
+    final appLocalizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: Colors.grey[50], // Fond gris très clair
@@ -72,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
               Text(
-                'Connexion Administrateur',
+                appLocalizations.loginScreenTitle,
                 style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -85,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  labelText: 'Email',
+                  labelText: appLocalizations.emailLabel,
                   hintText: 'entrez votre adresse e-mail',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
@@ -101,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _passwordController,
                 obscureText: _obscureText,
                 decoration: InputDecoration(
-                  labelText: 'Mot de passe',
+                  labelText: appLocalizations.passwordLabel,
                   hintText: 'entrez votre mot de passe',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
@@ -150,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   child: Text(
-                    'Se connecter',
+                    appLocalizations.signIn,
                     style: const TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),

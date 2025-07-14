@@ -9,62 +9,60 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get appTitle => 'Tableau de Bord Admin';
-
-  @override
-  String helloAdmin(String name) {
-    return 'Bonjour, $name !';
-  }
-
-  @override
-  String get totalStructures => 'Total Structures';
-
-  @override
-  String get totalAdmins => 'Total Admins';
-
-  @override
-  String get paymentsToday => 'Paiements Aujourd\'hui';
-
-  @override
-  String get activeServices => 'Services Actifs';
-
-  @override
-  String get quickActions => 'Actions Rapides';
-
-  @override
-  String get manageAdmins => 'Gérer les Admins';
-
-  @override
-  String get manageStructures => 'Gérer les Structures';
-
-  @override
-  String get viewAllPayments => 'Voir tous les Paiements';
-
-  @override
-  String get logout => 'Déconnexion';
+  String get appTitle => 'Structure Front';
 
   @override
   String get loginScreenTitle => 'Connexion Administrateur';
 
   @override
-  String get emailLabel => 'E-mail';
+  String get emailLabel => 'Email';
 
   @override
   String get passwordLabel => 'Mot de passe';
 
   @override
-  String get forgotPassword => 'Mot de passe oublié ?';
-
-  @override
   String get signIn => 'Se connecter';
 
   @override
-  String get incorrectEmailPassword => 'E-mail ou mot de passe incorrect.';
+  String helloAdmin(Object name) {
+    return 'Bienvenue, $name!';
+  }
 
   @override
-  String adminDashboardTitle(String structureName) {
-    return 'Tableau de Bord de $structureName';
-  }
+  String get quickActions => 'Actions Rapides';
+
+  @override
+  String get paymentHistory => 'Historique des Paiements';
+
+  @override
+  String get noPaymentsRecorded => 'Aucun paiement enregistré';
+
+  @override
+  String get amount => 'Montant';
+
+  @override
+  String get paymentMethod => 'Méthode de paiement';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get logout => 'Déconnexion';
+
+  @override
+  String get viewAllPayments => 'Voir tous les paiements';
+
+  @override
+  String get language => 'Langue';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get french => 'Français';
+
+  @override
+  String get structureManagement => 'Gestion des Structures';
 
   @override
   String get totalPayments => 'Paiements Totaux';
@@ -73,64 +71,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get transactions => 'Transactions';
 
   @override
-  String get paymentHistory => 'Historique des Paiements';
+  String get manageServicesProducts => 'Gérer les Services & Produits';
 
   @override
-  String get noPaymentsRecorded =>
-      'Aucun paiement enregistré pour cette structure.';
+  String get adminDeletedSuccessfully => 'Administrateur supprimé avec succès';
 
   @override
-  String get paymentDetails => 'Détails du Paiement';
+  String get manageAdmins => 'Gérer les Administrateurs';
 
   @override
-  String get transactionId => 'ID de Transaction:';
+  String get noAdminsRecorded => 'Aucun administrateur enregistré';
 
   @override
-  String get amount => 'Montant:';
+  String get attachedStructure => 'Structure Attachée';
 
   @override
-  String get date => 'Date:';
-
-  @override
-  String get paymentMethod => 'Méthode de Paiement:';
-
-  @override
-  String get clientInfo => 'Informations du Client';
-
-  @override
-  String get clientName => 'Nom du Client:';
-
-  @override
-  String get phoneNumber => 'Numéro de Téléphone:';
-
-  @override
-  String get serviceProductInfo => 'Informations Service/Produit';
-
-  @override
-  String get serviceProduct => 'Service/Produit:';
-
-  @override
-  String get downloadReceipt => 'Télécharger le Reçu';
-
-  @override
-  String get couldNotOpenReceipt =>
-      'Impossible d\'ouvrir le reçu. Vérifiez l\'URL.';
-
-  @override
-  String get manageStructuresTitle => 'Gérer les Structures';
-
-  @override
-  String get noStructuresRecorded =>
-      'Aucune structure enregistrée pour l\'instant.';
-
-  @override
-  String get addStructure => 'Ajouter une Structure';
-
-  @override
-  String get editStructure => 'Modifier la Structure';
-
-  @override
-  String get structureDeletedSuccessfully => 'Structure supprimée avec succès.';
+  String get selectStructure => 'Sélectionner une Structure';
 
   @override
   String get addAdministrator => 'Ajouter un Administrateur';
@@ -142,67 +98,75 @@ class AppLocalizationsFr extends AppLocalizations {
   String get fullName => 'Nom Complet';
 
   @override
-  String get enterFullName => 'Veuillez entrer le nom complet';
+  String get enterFullName => 'Veuillez entrer votre nom complet';
 
   @override
-  String get enterEmail => 'Veuillez entrer l\'e-mail';
+  String get enterEmail => 'Veuillez entrer votre email';
 
   @override
-  String get validEmail => 'Veuillez entrer une adresse e-mail valide';
+  String get validEmail => 'Veuillez entrer un email valide';
 
   @override
   String get password => 'Mot de passe';
 
   @override
   String get newPasswordHint =>
-      'Nouveau Mot de passe (laisser vide si inchangé)';
+      'Nouveau mot de passe (laisser vide pour conserver le mot de passe actuel)';
 
   @override
-  String get enterPassword => 'Veuillez entrer un mot de passe';
+  String get enterPassword => 'Veuillez entrer votre mot de passe';
 
   @override
-  String get attachedStructure => 'Structure Rattachée';
+  String get addAdministratorButton => 'Ajouter un Administrateur';
 
   @override
-  String get selectStructure => 'Veuillez sélectionner une structure';
+  String get updateButton => 'Mettre à jour';
 
   @override
-  String get addAdministratorButton => 'Ajouter l\'Administrateur';
+  String get structureDeletedSuccessfully => 'Structure supprimée avec succès';
 
   @override
-  String get adminDeletedSuccessfully => 'Administrateur supprimé avec succès.';
+  String get manageStructuresTitle => 'Gérer les Structures';
 
   @override
-  String get noAdminsRecorded =>
-      'Aucun administrateur enregistré pour l\'instant.';
-
-  @override
-  String get nameOfStructure => 'Nom de la Structure';
+  String get noStructuresRecorded => 'Aucune structure enregistrée';
 
   @override
   String get enterStructureName => 'Veuillez entrer le nom de la structure';
 
   @override
-  String get typeOfStructure => 'Type de Structure';
+  String get enterStructureType => 'Veuillez sélectionner le type de structure';
 
   @override
-  String get enterStructureType => 'Veuillez entrer le type de structure';
+  String get enterLocation => 'Veuillez entrer l\'emplacement';
 
   @override
-  String get location => 'Localisation';
+  String get couldNotOpenReceipt => 'Impossible d\'ouvrir le reçu';
 
   @override
-  String get enterLocation => 'Veuillez entrer la localisation';
+  String get paymentDetails => 'Détails du Paiement';
 
   @override
-  String get contactEmailOptional => 'E-mail de Contact (Optionnel)';
+  String get transactionId => 'ID de Transaction';
 
   @override
-  String get contactPhoneOptional => 'Téléphone de Contact (Optionnel)';
+  String get clientInfo => 'Informations du Client';
 
   @override
-  String get addStructureButton => 'Ajouter la Structure';
+  String get clientName => 'Nom du Client';
 
   @override
-  String get updateButton => 'Mettre à jour';
+  String get phoneNumber => 'Numéro de Téléphone';
+
+  @override
+  String get serviceProductInfo => 'Informations Service/Produit';
+
+  @override
+  String get serviceProduct => 'Service/Produit';
+
+  @override
+  String get downloadReceipt => 'Télécharger le Reçu';
+
+  @override
+  String get comingSoon => 'À venir';
 }

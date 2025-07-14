@@ -13,12 +13,15 @@ void main() {
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  static MyAppState of(BuildContext context) {
+    return context.findAncestorStateOfType<MyAppState>()!;
+  }
+
   @override
-  State<MyApp> createState() => _MyAppState();
-  static _MyAppState? of(BuildContext context) => context.findAncestorStateOfType<_MyAppState>();
+  State<MyApp> createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   Locale? _locale;
 
   @override
@@ -27,7 +30,7 @@ class _MyAppState extends State<MyApp> {
     _loadLocale();
   }
 
-  _loadLocale() async {
+  Future<void> _loadLocale() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? langCode = prefs.getString('languageCode');
     if (langCode != null) {
@@ -44,7 +47,7 @@ class _MyAppState extends State<MyApp> {
     _saveLocale(value.languageCode);
   }
 
-  _saveLocale(String languageCode) async {
+  Future<void> _saveLocale(String languageCode) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('languageCode', languageCode);
   }

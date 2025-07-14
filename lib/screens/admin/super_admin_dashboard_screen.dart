@@ -5,6 +5,7 @@ import 'package:structure_front/screens/admin/admin_management_screen.dart';
 import 'package:structure_front/screens/admin/structure_management_screen.dart';
 import 'package:structure_front/screens/admin/service_product_management_screen.dart';
 import 'package:structure_front/screens/admin/payment_detail_screen.dart';
+import 'package:structure_front/l10n/app_localizations.dart';
 
 class SuperAdminDashboardScreen extends StatelessWidget {
   const SuperAdminDashboardScreen({super.key});
@@ -19,13 +20,13 @@ class SuperAdminDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Suppression de la localisation pour le moment
+    final appLocalizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: Text(
-          'Structure Front', // Nom de l'application
+          appLocalizations.appTitle, // Nom de l'application
           style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.blueGrey[700],
@@ -50,7 +51,7 @@ class SuperAdminDashboardScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () => _logout(context),
-            tooltip: 'Déconnexion', // Tooltip pour le bouton de déconnexion
+            tooltip: appLocalizations.logout, // Tooltip pour le bouton de déconnexion
           ),
         ],
       ),
@@ -60,7 +61,7 @@ class SuperAdminDashboardScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'Bienvenue, Super Admin!', // Example: "Hello, Admin!"
+              appLocalizations.helloAdmin('Super Admin'), // Example: "Hello, Admin!"
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -87,7 +88,7 @@ class SuperAdminDashboardScreen extends StatelessWidget {
 
             // --- Section Navigation Rapide ---
             Text(
-              'Actions Rapides',
+              appLocalizations.quickActions,
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -121,7 +122,7 @@ class SuperAdminDashboardScreen extends StatelessWidget {
             const SizedBox(height: 15),
             _buildActionButton(
               context,
-              'Voir tous les paiements',
+              appLocalizations.viewAllPayments,
               Icons.receipt_long,
                   () {
                 print('Naviguer vers Voir tous les Paiements');

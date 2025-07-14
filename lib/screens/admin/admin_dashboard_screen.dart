@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:structure_front/models/payment.dart';
-import 'package:structure_front/screens/admin/service_product_management_screen.dart';
+import 'package:structure_front/models/structure.dart';
+import 'package:structure_front/screens/admin/admin_management_screen.dart';
 import 'package:structure_front/screens/admin/structure_management_screen.dart';
-import 'package:structure_front/themes/app_theme.dart';
 import 'package:structure_front/screens/admin/payment_detail_screen.dart';
-import 'package:structure_front/screens/auth/login_screen.dart'; // Importez l'écran de détails du paiement
+import 'package:structure_front/screens/admin/service_management_screen.dart';
+import 'package:structure_front/screens/auth/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:structure_front/l10n/app_localizations.dart';
+import 'package:structure_front/main.dart'; // Import MyAppState
+import 'package:structure_front/themes/app_theme.dart'; // Importez l'écran de détails du paiement
 
 class AdminDashboardScreen extends StatefulWidget {
   final String adminEmail; // Pour identifier l'admin (pour simuler la structure)
@@ -94,7 +99,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Suppression de la localisation pour le moment
+    final appLocalizations = AppLocalizations.of(context)!;
 
     double totalAmount = _payments.fold(0.0, (sum, item) => sum + item.amount);
     int totalTransactions = _payments.length;
@@ -113,7 +118,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           PopupMenuButton<Locale>(
             icon: const Icon(Icons.language, color: Colors.white),
             onSelected: (Locale locale) {
-              // Suppression de la localisation pour le moment
+              context.findAncestorStateOfType<MyAppState>()!.setLocale(locale);
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<Locale>>[
               const PopupMenuItem<Locale>(
@@ -137,7 +142,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               ),
             ),
             onPressed: () => _logout(context),
-            tooltip: 'Déconnexion', // Translated tooltip
+            tooltip: appLocalizations.logout, // Translated tooltip
           ),
         ],
       ),
@@ -147,7 +152,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'Bienvenue, ${widget.adminEmail.split('@').first}!',
+              appLocalizations.helloAdmin(widget.adminEmail.split('@').first),
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -164,17 +169,17 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               children: <Widget>[
-                _buildInfoCard(context, 'Paiements Totaux', 'XAF ${totalAmount.toStringAsFixed(0)}', Icons.payments),
-                _buildInfoCard(context, 'Transactions', '$totalTransactions', Icons.receipt_long),
+                _buildInfoCard(context, appLocalizations.totalPayments, 'XAF ${totalAmount.toStringAsFixed(0)}', Icons.payments),
+                _buildInfoCard(context, appLocalizations.transactions, '$totalTransactions', Icons.receipt_long),
                 // Ajoutez d'autres stats si besoin
               ],
             ),
             const SizedBox(height: 40),
 
             // --- Nouvelle Section: Gestion de la Structure (AJOUTÉE) ---
-            const Text(
-              'Gestion de ma Structure',
-              style: TextStyle(
+            Text(
+              appLocalizations.structureManagement,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -183,14 +188,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             const SizedBox(height: 20),
             _buildActionButton(
               context,
-              'Gérer Services & Produits',
+              appLocalizations.manageServicesProducts,
               Icons.assignment, // Icône pour les services/produits
               () {
                 // Naviguer vers l'écran de gestion des services/produits
                 if (_structureId.isNotEmpty) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => ServiceProductManagementScreen(
+                      builder: (context) => ServiceManagementScreen(
                         structureId: _structureId,
                         structureName: _structureName,
                       ),
@@ -212,7 +217,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             ), // Espace avant l'historique des paiements
             // --- Historique des Paiements ---
             Text(
-              'Historique des Paiements',
+              appLocalizations.paymentHistory,
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -225,7 +230,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 40.0),
                       child: Text(
-                        'Aucun paiement enregistré',
+                        appLocalizations.noPaymentsRecorded,
                         style: const TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     ),
@@ -256,7 +261,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
-                            'Montant: XAF ${payment.amount.toStringAsFixed(0)}\nMéthode de paiement: ${payment.paymentMethod}\nDate: ${payment.date.day}/${payment.date.month}/${payment.date.year}',
+                            '${appLocalizations.amount}: XAF ${payment.amount.toStringAsFixed(0)}\n${appLocalizations.paymentMethod}: ${payment.paymentMethod}\n${appLocalizations.date}: ${payment.date.day}/${payment.date.month}/${payment.date.year}',
                           ),
                           trailing: const Icon(
                             Icons.arrow_forward_ios,
