@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:structure_front/models/payment.dart'; // Importez le modèle de paiement
-import 'package:structure_front/screens/auth/login_screen.dart'; // Pour la déconnexion
-import 'package:structure_front/screens/admin/payment_detail_screen.dart'; // Importez l'écran de détails du paiement
-import 'package:structure_front/screens/admin/service_product_management_screen.dart'; // NOUVEL IMPORT pour la gestion des services/produits
-import 'package:structure_front/themes/app_theme.dart'; // NOUVEL IMPORT pour la gestion des thèmes
+import 'package:structure_front/models/payment.dart';
+import 'package:structure_front/screens/admin/service_product_management_screen.dart';
+import 'package:structure_front/screens/admin/structure_management_screen.dart';
+import 'package:structure_front/themes/app_theme.dart';
+import 'package:structure_front/screens/admin/payment_detail_screen.dart';
+import 'package:structure_front/screens/auth/login_screen.dart'; // Importez l'écran de détails du paiement
 
 class AdminDashboardScreen extends StatefulWidget {
-  final String
-  adminEmail; // Pour identifier l'admin (pour simuler la structure)
+  final String adminEmail; // Pour identifier l'admin (pour simuler la structure)
 
   const AdminDashboardScreen({super.key, required this.adminEmail});
 
@@ -17,11 +17,10 @@ class AdminDashboardScreen extends StatefulWidget {
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   // Simulez les données de la structure et les paiements en fonction de l'admin
-  String _structureName =
-      "Ma Structure"; // Sera mis à jour en fonction de l'admin
-  String _currentStructureId =
-      ''; // NOUVEAU: Variable pour stocker l'ID de la structure de l'Admin
+  String _structureId = '';
+  String _structureName = '';
   List<Payment> _payments = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -30,13 +29,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   }
 
   void _loadAdminData() {
-    // Dans une vraie application, vous feriez un appel API ici
-    // pour récupérer les infos de la structure et ses paiements
-    // basées sur l'ID de l'admin ou son email.
-
     if (widget.adminEmail == 'admin1@structureA.com') {
       _structureName = 'Pharmacie Centrale';
-      _currentStructureId = 'S001'; // ID de structure simulé
+      _structureId = 'S001'; // ID de structure simulé
       _payments = [
         Payment(
           id: 'P001',
@@ -59,7 +54,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       ];
     } else if (widget.adminEmail == 'admin2@structureB.com') {
       _structureName = 'École Primaire Les Génies';
-      _currentStructureId = 'S002'; // ID de structure simulé
+      _structureId = 'S002'; // ID de structure simulé
       _payments = [
         Payment(
           id: 'P003',
@@ -82,16 +77,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       ];
     } else {
       _structureName = 'Structure Inconnue';
-      _currentStructureId = ''; // Pas de structure associée
+      _structureId = ''; // Pas de structure associée
       _payments = [];
     }
 
-    setState(() {}); // Rafraîchit l'interface avec les données chargées
+    setState(() {});
   }
 
   void _logout(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      MaterialPageRoute(builder: (context) => LoginScreen()),
       (Route<dynamic> route) => false,
     );
     print('Admin déconnecté.');
@@ -99,7 +94,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Calcul des totaux simulés
+    // Suppression de la localisation pour le moment
+
     double totalAmount = _payments.fold(0.0, (sum, item) => sum + item.amount);
     int totalTransactions = _payments.length;
 
@@ -108,11 +104,28 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       appBar: AppBar(
         title: Text(
           'Tableau de Bord de $_structureName',
-          style: const TextStyle(color: Colors.black87, fontSize: 18),
+          style: const TextStyle(color: Colors.white, fontSize: 18),
         ),
         backgroundColor: AppTheme.primaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
+          // Language Selection Button
+          PopupMenuButton<Locale>(
+            icon: const Icon(Icons.language, color: Colors.white),
+            onSelected: (Locale locale) {
+              // Suppression de la localisation pour le moment
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<Locale>>[
+              const PopupMenuItem<Locale>(
+                value: Locale('en'),
+                child: Text('English'),
+              ),
+              const PopupMenuItem<Locale>(
+                value: Locale('fr'),
+                child: Text('Français'),
+              ),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
             style: ElevatedButton.styleFrom(
@@ -124,7 +137,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               ),
             ),
             onPressed: () => _logout(context),
-            tooltip: 'Déconnexion',
+            tooltip: 'Déconnexion', // Translated tooltip
           ),
         ],
       ),
@@ -134,7 +147,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'Bonjour, ${widget.adminEmail.split('@').first} !', // Juste un exemple
+              'Bienvenue, ${widget.adminEmail.split('@').first}!',
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -151,18 +164,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               children: <Widget>[
-                _buildInfoCard(
-                  context,
-                  'Paiements Totaux',
-                  'XAF ${totalAmount.toStringAsFixed(0)}',
-                  Icons.payments,
-                ),
-                _buildInfoCard(
-                  context,
-                  'Transactions',
-                  '$totalTransactions',
-                  Icons.receipt_long,
-                ),
+                _buildInfoCard(context, 'Paiements Totaux', 'XAF ${totalAmount.toStringAsFixed(0)}', Icons.payments),
+                _buildInfoCard(context, 'Transactions', '$totalTransactions', Icons.receipt_long),
                 // Ajoutez d'autres stats si besoin
               ],
             ),
@@ -184,11 +187,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               Icons.assignment, // Icône pour les services/produits
               () {
                 // Naviguer vers l'écran de gestion des services/produits
-                if (_currentStructureId.isNotEmpty) {
+                if (_structureId.isNotEmpty) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => ServiceProductManagementScreen(
-                        structureId: _currentStructureId,
+                        structureId: _structureId,
                         structureName: _structureName,
                       ),
                     ),
@@ -208,9 +211,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               height: 40,
             ), // Espace avant l'historique des paiements
             // --- Historique des Paiements ---
-            const Text(
+            Text(
               'Historique des Paiements',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -218,12 +221,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             ),
             const SizedBox(height: 20),
             _payments.isEmpty
-                ? const Center(
+                ? Center(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 40.0),
+                      padding: const EdgeInsets.symmetric(vertical: 40.0),
                       child: Text(
-                        'Aucun paiement enregistré pour cette structure.',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                        'Aucun paiement enregistré',
+                        style: const TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     ),
                   )
@@ -253,7 +256,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
-                            'Montant: XAF ${payment.amount.toStringAsFixed(0)}\nMéthode: ${payment.paymentMethod}\nDate: ${payment.date.day}/${payment.date.month}/${payment.date.year}',
+                            'Montant: XAF ${payment.amount.toStringAsFixed(0)}\nMéthode de paiement: ${payment.paymentMethod}\nDate: ${payment.date.day}/${payment.date.month}/${payment.date.year}',
                           ),
                           trailing: const Icon(
                             Icons.arrow_forward_ios,
@@ -261,7 +264,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             color: Colors.grey,
                           ),
                           onTap: () {
-                            // NAVIGUER VERS L'ÉCRAN DE DÉTAILS DU PAIEMENT
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) =>
@@ -280,12 +282,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   }
 
   // Widget utilitaire pour les cartes d'information (copié de SuperAdminDashboard)
-  Widget _buildInfoCard(
-    BuildContext context,
-    String title,
-    String value,
-    IconData icon,
-  ) {
+  Widget _buildInfoCard(BuildContext context, String title, String value, IconData icon) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

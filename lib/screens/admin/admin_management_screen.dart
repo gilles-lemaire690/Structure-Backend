@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:structure_front/models/structure.dart'; // NOUVEL IMPORT pour le modèle Structure
+import 'package:structure_front/l10n/app_localizations.dart';
+import 'package:structure_front/models/structure.dart';
+
 
 // --- Modèle de données pour un administrateur (MIS À JOUR) ---
 class Admin {
   final String id;
   final String name;
   final String email;
-  final String structureId; // Nouveau: ID de la structure à laquelle il est rattaché
-  final String structureName; // Reste pour l'affichage facile
+  final String structureId;
+  final String structureName;
 
   Admin({
     required this.id,
     required this.name,
     required this.email,
-    required this.structureId, // MIS À JOUR dans le constructeur
+    required this.structureId,
     required this.structureName,
   });
 }
@@ -87,27 +89,29 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
       print('Admin avec ID $id supprimé.');
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Administrateur supprimé avec succès.')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.adminDeletedSuccessfully)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!; // Access translations
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          'Gérer les Administrateurs',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          appLocalizations.manageAdmins,
+          style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.blueGrey[700],
-        iconTheme: const IconThemeData(color: Colors.white), // Couleur des icônes de l'AppBar
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: _admins.isEmpty
-          ? const Center(
+          ? Center(
               child: Text(
-                'Aucun administrateur enregistré pour l\'instant.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                appLocalizations.noAdminsRecorded, // Translated text
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
             )
           : ListView.builder(
@@ -139,7 +143,7 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Structure: ${admin.structureName}',
+                                '${appLocalizations.attachedStructure}: ${admin.structureName}', // Translated text
                                 style: TextStyle(fontSize: 14, color: Colors.blueGrey[600]),
                               ),
                             ],
@@ -220,7 +224,7 @@ class _AdminFormScreenState extends State<AdminFormScreen> {
       // Assurez-vous qu'une structure est sélectionnée
       if (_selectedStructureId == null || _selectedStructureName == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Veuillez sélectionner une structure.')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.selectStructure)), // Translated text
         );
         return;
       }
@@ -238,10 +242,12 @@ class _AdminFormScreenState extends State<AdminFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!; // Access translations
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.admin == null ? 'Ajouter un Administrateur' : 'Modifier l\'Administrateur',
+          widget.admin == null ? appLocalizations.addAdministrator : appLocalizations.editAdministrator, // Translated title
           style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.blueGrey[700],
@@ -257,12 +263,12 @@ class _AdminFormScreenState extends State<AdminFormScreen> {
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  labelText: 'Nom Complet',
+                  labelText: appLocalizations.fullName, // Translated label
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer le nom complet';
+                    return appLocalizations.enterFullName; // Translated message
                   }
                   return null;
                 },
@@ -272,15 +278,15 @@ class _AdminFormScreenState extends State<AdminFormScreen> {
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  labelText: 'E-mail',
+                  labelText: appLocalizations.emailLabel, // Translated label
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer l\'e-mail';
+                    return appLocalizations.enterEmail; // Translated message
                   }
                   if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    return 'Veuillez entrer une adresse e-mail valide';
+                    return appLocalizations.validEmail; // Translated message
                   }
                   return null;
                 },
@@ -290,12 +296,12 @@ class _AdminFormScreenState extends State<AdminFormScreen> {
                 controller: _passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
-                  labelText: widget.admin == null ? 'Mot de passe' : 'Nouveau Mot de passe (laisser vide si inchangé)',
+                  labelText: widget.admin == null ? appLocalizations.password : appLocalizations.newPasswordHint, // Translated label
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 validator: (value) {
                   if (widget.admin == null && (value == null || value.isEmpty)) {
-                    return 'Veuillez entrer un mot de passe';
+                    return appLocalizations.enterPassword; // Translated message
                   }
                   return null;
                 },
@@ -305,7 +311,7 @@ class _AdminFormScreenState extends State<AdminFormScreen> {
               DropdownButtonFormField<String>(
                 value: _selectedStructureId,
                 decoration: InputDecoration(
-                  labelText: 'Structure Rattachée',
+                  labelText: appLocalizations.attachedStructure, // Translated label
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 items: widget.availableStructures.map((structure) {
@@ -324,7 +330,7 @@ class _AdminFormScreenState extends State<AdminFormScreen> {
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez sélectionner une structure';
+                    return appLocalizations.selectStructure; // Translated message
                   }
                   return null;
                 },
@@ -342,7 +348,7 @@ class _AdminFormScreenState extends State<AdminFormScreen> {
                     ),
                   ),
                   child: Text(
-                    widget.admin == null ? 'Ajouter l\'Administrateur' : 'Mettre à jour',
+                    widget.admin == null ? appLocalizations.addAdministratorButton : appLocalizations.updateButton, // Translated text
                     style: const TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),

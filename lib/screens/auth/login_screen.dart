@@ -30,64 +30,62 @@ class _LoginScreenState extends State<LoginScreen> {
     print('Email: $email');
     print('Password: $password');
 
-    // Simuler la connexion en fonction des identifiants
-    if (email == 'superadmin@example.com' && password == 'password') {
-      print('Connexion Super Admin réussie !');
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const SuperAdminDashboardScreen(),
-        ),
-      );
-    } else if (email.startsWith('admin') && password == 'password') { // Exemple: admin1@structureA.com, admin2@structureB.com
-      print('Connexion Admin réussie !');
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => AdminDashboardScreen(adminEmail: email), // Passe l'email à l'AdminDashboard
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('E-mail ou mot de passe incorrect.')),
-      );
-      print('Échec de la connexion.');
-    }
+  // Simuler la connexion en fonction des identifiants
+  if (email == 'superadmin@example.com' && password == 'password') {
+    print('Connexion Super Admin réussie !');
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => const SuperAdminDashboardScreen(),
+      ),
+    );
+  } else if (email.startsWith('admin') && password == 'password') { // Exemple: admin1@structureA.com, admin2@structureB.com
+    print('Connexion Admin réussie !');
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => AdminDashboardScreen(adminEmail: email), // Passe l'email à l'AdminDashboard
+      ),
+    );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('E-mail ou mot de passe incorrect.')),
+    );
+    print('Échec de la connexion.');
   }
+}
 
   @override
   Widget build(BuildContext context) {
+    // Suppression de la localisation pour le moment
+
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
+      backgroundColor: Colors.grey[50], // Fond gris très clair
       body: Center(
-        child: SingleChildScrollView( // Permet le défilement si le clavier apparaît
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              // --- Logo ou Icône (Optionnel) ---
-              // Remplacez 'assets/logo.png' par le chemin de votre logo si vous en avez un.
-              // Sinon, vous pouvez utiliser une icône temporaire ou la supprimer.
               const Icon(
-                Icons.business, // Icône temporaire, remplacez par votre logo
+                Icons.business,
                 size: 80,
-                color: AppTheme.primaryColor,
+                color: Colors.blue,
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 'Connexion Administrateur',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryColor,
+                  color: Colors.blue,
                 ),
               ),
               const SizedBox(height: 40),
 
-              // --- Champ E-mail ---
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  labelText: 'E-mail',
+                  labelText: 'Email',
                   hintText: 'entrez votre adresse e-mail',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
@@ -99,7 +97,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
 
-              // --- Champ Mot de passe ---
               TextFormField(
                 controller: _passwordController,
                 obscureText: _obscureText,
@@ -113,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscureText ? Icons.visibility : Icons.visibility_off,
-                      color: AppTheme.primaryColor,
+                      color: Colors.blue,
                     ),
                     onPressed: () {
                       setState(() {
@@ -127,37 +124,34 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 10),
 
-              // --- Bouton Mot de passe oublié ? ---
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    // Logique pour le mot de passe oublié
                     print('Mot de passe oublié pressed');
                   },
                   child: const Text(
                     'Mot de passe oublié ?',
-                    style: TextStyle(color: AppTheme.primaryColor),
+                    style: TextStyle(color: Colors.blueGrey),
                   ),
                 ),
               ),
               const SizedBox(height: 30),
 
-              // --- Bouton Se connecter ---
               SizedBox(
-                width: double.infinity, // Prend toute la largeur disponible
+                width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _login,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor, // Couleur de bouton plus foncée et sobre
+                    backgroundColor: Colors.blueGrey[700], // Couleur de bouton plus foncée et sobre
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Se connecter',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    style: const TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
               ),
