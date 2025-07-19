@@ -175,6 +175,17 @@ public class Utilisateur implements UserDetails {
     public Utilisateur() {
     }
 
+    // ✅ Nouveau constructeur simplifié
+    public Utilisateur(String nom, String prenom, String telephone, String email, String motDePasse, RoleType role) {
+        this.nom = nom;
+        this.prenom = prenom;
+        this.telephone = telephone;
+        this.email = email;
+        this.motDePasse = motDePasse;
+        this.role = role;
+    }
+
+    // ⚙️ Constructeur complet existant conservé
     public Utilisateur(Long id, String nom, String prenom, String telephone, String email, String motDePasse, RoleType role, Date createdAt, Date updatedAt, Structure structure) {
         this.id = id;
         this.nom = nom;

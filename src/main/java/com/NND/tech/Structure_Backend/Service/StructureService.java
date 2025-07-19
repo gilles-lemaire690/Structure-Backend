@@ -11,6 +11,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
 public class StructureService {
 
@@ -30,8 +32,24 @@ public class StructureService {
         structure.setDescription(request.getDescription());
         structure.setAdresse(request.getAdresse());
         structure.setLogoUrl(request.getLogoUrl());
+        structure.setServicesProduits(new ArrayList<>()); // éviter null
 
-        return structure;
+        // Création de l'admin
+        Utilisateur admin = new Utilisateur();
+        admin.setNom(request.getNom());
+        admin.setPrenom(request.getPrenom());
+        admin.setEmail(request.getEmail());
+        admin.setTelephone(request.getTelephone());
+        admin.setMotDePasse(passwordEncoder.encode(request.getPassword()));
+        admin.setRole(RoleType.ADMIN);
+
+        Utilisateur savedAdmin = utilisateurRepository.save(admin);
+        structure.setAdmin(savedAdmin);
+        Structure savedStructure = structureRepository.save(structure);
+
+        // Recharge pour avoir toutes les relations et l'id
+        Structure fullStructure = structureRepository.findById(savedStructure.getId()).orElseThrow();
+        return fullStructure;
     }
 
     @Transactional
