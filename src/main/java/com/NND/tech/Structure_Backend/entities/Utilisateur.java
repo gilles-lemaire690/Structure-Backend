@@ -34,9 +34,9 @@ public class Utilisateur implements UserDetails {
 
     private String motDePasse;
 
-    @Enumerated(EnumType.STRING)
+    /*@Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private RoleType role;
+    private RoleType role;*/
 
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
@@ -61,6 +61,9 @@ public class Utilisateur implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
+
+    @Convert(converter = RoleTypeConverter.class)
+private RoleType role;
 
     @Override
     public String getPassword() {
