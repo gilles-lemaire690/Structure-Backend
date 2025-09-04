@@ -1,0 +1,189 @@
+package com.NND.tech.Structure_Backend.controller;
+
+import com.NND.tech.Structure_Backend.StructureBackendApplication;
+import com.NND.tech.Structure_Backend.model.Structure;
+import com.NND.tech.Structure_Backend.model.Transaction;
+import com.NND.tech.Structure_Backend.model.TransactionStatus;
+import com.NND.tech.Structure_Backend.model.User;
+import com.NND.tech.Structure_Backend.repository.StructureRepository;
+import com.NND.tech.Structure_Backend.repository.TransactionRepository;
+import com.NND.tech.Structure_Backend.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@SpringBootTest(classes = StructureBackendApplication.class)
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+@Transactional
+class TransactionControllerIntegrationTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private StructureRepository structureRepository;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private Transaction testTransaction;
+    private User testUser;
+    private Structure testStructure;
+
+    @BeforeEach
+    void setUp() {
+        // Nettoyer la base de données avant chaque test
+        transactionRepository.deleteAll();
+        userRepository.deleteAll();
+        structureRepository.deleteAll();
+        
+        // Créer une structure de test
+        testStructure = new Structure();
+        testStructure.setName("Test Structure");
+        testStructure.setAddress("123 Test St");
+        testStructure = structureRepository.save(testStructure);
+        
+        // Créer un utilisateur de test
+        testUser = new User();
+        testUser.setFirstname("John");
+        testUser.setLastname("Doe");
+        testUser.setEmail("john.doe@example.com");
+        testUser.setStructure(testStructure);
+        testUser = userRepository.save(testUser);
+        
+        // Créer une transaction de test
+        testTransaction = new Transaction();
+        testTransaction.setAmount(new BigDecimal("100.00"));
+        testTransaction.setStatus(TransactionStatus.PENDING);
+        testTransaction.setTransactionDate(LocalDateTime.now());
+        testTransaction.setUser(testUser);
+        testTransaction.setStructure(testStructure);
+        testTransaction = transactionRepository.save(testTransaction);
+    }
+
+    @Test
+    void createTransaction_ShouldReturnCreatedTransaction() throws Exception {
+        // Arrange
+        String requestBody = String.format(
+            "{\"amount\":50.00,\"status\":\"PENDING\",\"userId\":%d,\"structureId\":%d}",
+            testUser.getId(),
+            testStructure.getId()
+        );
+
+        // Act & Assert
+        mockMvc.perform(post("/api/transactions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.amount").value(50.00))
+                .andExpect(jsonPath("$.status").value("PENDING"));
+    }
+
+    @Test
+    void getTransactionById_ShouldReturnTransaction_WhenFound() throws Exception {
+        // Act & Assert
+        mockMvc.perform(get("/api/transactions/" + testTransaction.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(testTransaction.getId()))
+                .andExpect(jsonPath("$.amount").value(100.00))
+                .andExpect(jsonPath("$.status").value("PENDING"));
+    }
+
+    @Test
+    void getTransactionById_ShouldReturnNotFound_WhenNotExists() throws Exception {
+        // Act & Assert
+        mockMvc.perform(get("/api/transactions/999"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getTransactionsByUserId_ShouldReturnUserTransactions() throws Exception {
+        // Act & Assert
+        mockMvc.perform(get("/api/transactions/user/" + testUser.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id").value(testTransaction.getId()));
+    }
+
+    @Test
+    void getTransactionsByStructureId_ShouldReturnStructureTransactions() throws Exception {
+        // Act & Assert
+        mockMvc.perform(get("/api/transactions/structure/" + testStructure.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id").value(testTransaction.getId()));
+    }
+
+    @Test
+    void updateTransactionStatus_ShouldUpdateStatus() throws Exception {
+        // Act & Assert
+        mockMvc.perform(put("/api/transactions/" + testTransaction.getId() + "/status")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("\"COMPLETED\""))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("COMPLETED"));
+    }
+
+    @Test
+    void getTotalRevenue_ShouldReturnCorrectSum() throws Exception {
+        // Ajouter une autre transaction pour le même utilisateur et structure
+        Transaction anotherTransaction = new Transaction();
+        anotherTransaction.setAmount(new BigDecimal("50.00"));
+        anotherTransaction.setStatus(TransactionStatus.COMPLETED);
+        anotherTransaction.setTransactionDate(LocalDateTime.now());
+        anotherTransaction.setUser(testUser);
+        anotherTransaction.setStructure(testStructure);
+        transactionRepository.save(anotherTransaction);
+
+        // Act & Assert
+        mockMvc.perform(get("/api/transactions/revenue?structureId=" + testStructure.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().string("150.00"));
+    }
+
+    @Test
+    void getTransactionCount_ShouldReturnCorrectCount() throws Exception {
+        // Act & Assert
+        mockMvc.perform(get("/api/transactions/count?structureId=" + testStructure.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().string("1"));
+    }
+
+    @Test
+    void getTransactionsByDateRange_ShouldReturnFilteredTransactions() throws Exception {
+        // Arrange
+        LocalDateTime now = LocalDateTime.now();
+        String startDate = now.minusDays(1).toString();
+        String endDate = now.plusDays(1).toString();
+
+        // Act & Assert
+        mockMvc.perform(get("/api/transactions/date-range")
+                .param("structureId", testStructure.getId().toString())
+                .param("startDate", startDate)
+                .param("endDate", endDate))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id").value(testTransaction.getId()));
+    }
+}

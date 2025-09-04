@@ -1,29 +1,29 @@
 package com.NND.tech.Structure_Backend.Service;
 
-
 import com.NND.tech.Structure_Backend.DTO.ServiceProduitRequest;
-import com.NND.tech.Structure_Backend.Repository.ServiceProduitRepository;
-import com.NND.tech.Structure_Backend.Repository.UtilisateurRepository;
-import com.NND.tech.Structure_Backend.entities.ServiceProduit;
-import com.NND.tech.Structure_Backend.entities.Structure;
-import com.NND.tech.Structure_Backend.entities.Utilisateur;
+import com.NND.tech.Structure_Backend.repository.ServiceRepository;
+import com.NND.tech.Structure_Backend.repository.UserRepository;
+import com.NND.tech.Structure_Backend.model.entity.ServiceEntity;
+import com.NND.tech.Structure_Backend.model.entity.Structure;
+import com.NND.tech.Structure_Backend.model.entity.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-@Service
+import java.math.BigDecimal;
 
+@Service
 public class ServiceProduitService {
 
-    private final ServiceProduitRepository serviceProduitRepository;
-    private final UtilisateurRepository utilisateurRepository;
+    private final ServiceRepository serviceRepository;
+    private final UserRepository userRepository;
 
-    public ServiceProduitService(ServiceProduitRepository serviceProduitRepository, UtilisateurRepository utilisateurRepository) {
-        this.serviceProduitRepository = serviceProduitRepository;
-        this.utilisateurRepository = utilisateurRepository;
+    public ServiceProduitService(ServiceRepository serviceRepository, UserRepository userRepository) {
+        this.serviceRepository = serviceRepository;
+        this.userRepository = userRepository;
     }
 
-    public ServiceProduit createServiceProduit(ServiceProduitRequest request, String adminEmail) {
-        Utilisateur admin = utilisateurRepository.findByEmail(adminEmail)
+    public ServiceEntity createServiceProduit(ServiceProduitRequest request, String adminEmail) {
+        User admin = userRepository.findByEmail(adminEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("Admin non trouvé: " + adminEmail));
 
         Structure structure = admin.getStructure();
@@ -31,44 +31,48 @@ public class ServiceProduitService {
             throw new IllegalStateException("Cet admin n'est associé à aucune structure.");
         }
 
-        ServiceProduit serviceProduit = new ServiceProduit(
-                request.getNom(),
-                request.getDescription(),
-                request.getPrix(),
-                structure
-        );
+        ServiceEntity service = ServiceEntity.builder()
+                .name(request.getNom())
+                .description(request.getDescription())
+                .price(new BigDecimal(request.getPrix()))
+                .structure(structure)
+                .category("default") // À mettre à jour selon la logique métier
+                .duration(0) // Valeur par défaut, à mettre à jour selon la logique métier
+                .active(true)
+                .build();
 
-        return serviceProduitRepository.save(serviceProduit);
+        return serviceRepository.save(service);
     }
 
-    public ServiceProduit updateServiceProduit(Long serviceId, ServiceProduitRequest request, String adminEmail) {
-        ServiceProduit serviceProduit = serviceProduitRepository.findById(serviceId)
+    public ServiceEntity updateServiceProduit(Long serviceId, ServiceProduitRequest request, String adminEmail) {
+        ServiceEntity service = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new IllegalArgumentException("Service/Produit non trouvé avec l'id: " + serviceId));
 
-        checkOwnership(serviceProduit, adminEmail);
+        checkOwnership(service, adminEmail);
 
-        serviceProduit.setNom(request.getNom());
-        serviceProduit.setDescription(request.getDescription());
-        serviceProduit.setPrix(request.getPrix());
+        service.setName(request.getNom());
+        service.setDescription(request.getDescription());
+        service.setPrice(new BigDecimal(request.getPrix()));
+        // Mettre à jour d'autres champs si nécessaire
 
-        return serviceProduitRepository.save(serviceProduit);
+        return serviceRepository.save(service);
     }
 
     public void deleteServiceProduit(Long serviceId, String adminEmail) {
-        ServiceProduit serviceProduit = serviceProduitRepository.findById(serviceId)
+        ServiceEntity service = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new IllegalArgumentException("Service/Produit non trouvé avec l'id: " + serviceId));
 
-        checkOwnership(serviceProduit, adminEmail);
+        checkOwnership(service, adminEmail);
 
-        serviceProduitRepository.delete(serviceProduit);
+        serviceRepository.delete(service);
     }
 
-    private void checkOwnership(ServiceProduit serviceProduit, String adminEmail) {
-        Utilisateur admin = utilisateurRepository.findByEmail(adminEmail)
+    private void checkOwnership(ServiceEntity service, String adminEmail) {
+        User admin = userRepository.findByEmail(adminEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("Admin non trouvé: " + adminEmail));
 
         Structure structure = admin.getStructure();
-        if (structure == null || !serviceProduit.getStructure().getId().equals(structure.getId())) {
+        if (structure == null || !service.getStructure().getId().equals(structure.getId())) {
             throw new IllegalArgumentException("L'utilisateur n'est pas autorisé à modifier ce service/produit.");
         }
     }

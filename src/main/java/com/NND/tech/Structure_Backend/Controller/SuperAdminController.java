@@ -2,9 +2,9 @@ package com.NND.tech.Structure_Backend.Controller;
 
 import com.NND.tech.Structure_Backend.DTO.RegisterAdminRequest;
 import com.NND.tech.Structure_Backend.DTO.StructureRequest;
-import com.NND.tech.Structure_Backend.Service.StructureService;
-import com.NND.tech.Structure_Backend.entities.Structure;
-import com.NND.tech.Structure_Backend.entities.Utilisateur;
+import com.NND.tech.Structure_Backend.service.StructureService;
+import com.NND.tech.Structure_Backend.model.entity.Structure;
+import com.NND.tech.Structure_Backend.model.entity.User;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ public class SuperAdminController {
     }
 
     @PostMapping("/structures/{id}/admin")
-    public ResponseEntity<Utilisateur> createAdminForStructure(
+    public ResponseEntity<User> createAdminForStructure(
             @PathVariable("id") Long structureId,
             @Valid @RequestBody RegisterAdminRequest request) {
         return ResponseEntity.ok(structureService.createAdminForStructure(structureId, request));

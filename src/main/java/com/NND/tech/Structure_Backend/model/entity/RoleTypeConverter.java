@@ -1,4 +1,4 @@
-package com.NND.tech.Structure_Backend.entities;
+package com.NND.tech.Structure_Backend.model.entity;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
@@ -12,6 +12,6 @@ public class RoleTypeConverter implements AttributeConverter<RoleType, String> {
 
     @Override
     public RoleType convertToEntityAttribute(String dbData) {
-        return dbData == null ? null : RoleType.valueOf(dbData.toUpperCase());
+        return dbData == null ? null : RoleType.fromString(dbData);
     }
 }

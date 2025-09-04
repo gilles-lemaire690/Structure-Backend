@@ -1,6 +1,6 @@
 package com.NND.tech.Structure_Backend.config;
 
-import com.NND.tech.Structure_Backend.Repository.UtilisateurRepository;
+import com.NND.tech.Structure_Backend.repository.UtilisateurRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

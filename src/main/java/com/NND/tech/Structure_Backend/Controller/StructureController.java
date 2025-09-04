@@ -1,35 +1,60 @@
-package com.NND.tech.Structure_Backend.Controller;
+package com.NND.tech.Structure_Backend.controller;
 
-import com.NND.tech.Structure_Backend.Repository.StructureRepository;
-import com.NND.tech.Structure_Backend.entities.Structure;
+import com.NND.tech.Structure_Backend.dto.StructureDto;
+import com.NND.tech.Structure_Backend.exception.ResourceNotFoundException;
+import com.NND.tech.Structure_Backend.mapper.StructureMapper;
+import com.NND.tech.Structure_Backend.model.entity.Structure;
+import com.NND.tech.Structure_Backend.service.StructureService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/structures")
+@RequiredArgsConstructor
 public class StructureController {
 
-    private final StructureRepository structureRepository;
+    private final StructureService structureService;
+    private final StructureMapper structureMapper;
 
-    // ✅ Constructeur explicite pour injection
-    public StructureController(StructureRepository structureRepository) {
-        this.structureRepository = structureRepository;
-    }
-
-    // 🔍 Obtenir toutes les structures
     @GetMapping
-    public ResponseEntity<List<Structure>> getAllStructures() {
-        List<Structure> structures = structureRepository.findAll();
-        return ResponseEntity.ok(structures);
+    public ResponseEntity<List<StructureDto>> getAllStructures() {
+        return ResponseEntity.ok(structureService.findAll());
     }
 
-    // 🔍 Obtenir une structure par ID
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getStructureById(@PathVariable Long id) {
-        return structureRepository.findById(id)
-                .<ResponseEntity<Object>>map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(404).body("Structure non trouvée avec l'ID : " + id));
+    public ResponseEntity<StructureDto> getStructureById(@PathVariable Long id) {
+        return ResponseEntity.ok(structureService.findById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<StructureDto> createStructure(@Valid @RequestBody StructureDto structureDto) {
+        StructureDto created = structureService.create(structureDto);
+        return ResponseEntity
+                .created(URI.create("/api/structures/" + created.getId()))
+                .body(created);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<StructureDto> updateStructure(
+            @PathVariable Long id,
+            @Valid @RequestBody StructureDto structureDto) {
+        return ResponseEntity.ok(structureService.update(id, structureDto));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteStructure(@PathVariable Long id) {
+        structureService.delete(id);
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<StructureDto>> getActiveStructures() {
+        return ResponseEntity.ok(structureService.findByActiveTrue());
     }
 }

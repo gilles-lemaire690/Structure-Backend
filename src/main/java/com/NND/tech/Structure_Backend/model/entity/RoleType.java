@@ -1,15 +1,14 @@
-package com.NND.tech.Structure_Backend.entities;
+package com.NND.tech.Structure_Backend.model.entity;
 
 public enum RoleType {
-    ADMIN,
-    SUPER_ADMIN,
-    CLIENT;
+    SUPER_ADMIN, ADMIN, USER;
 
     public static RoleType fromString(String value) {
+        if (value == null) return null;
         try {
             return RoleType.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Rôle invalide : " + value);
+            return null;
         }
     }
 }

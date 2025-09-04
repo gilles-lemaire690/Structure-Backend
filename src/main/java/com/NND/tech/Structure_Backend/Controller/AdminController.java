@@ -1,8 +1,8 @@
 package com.NND.tech.Structure_Backend.Controller;
 
 import com.NND.tech.Structure_Backend.DTO.ServiceProduitRequest;
-import com.NND.tech.Structure_Backend.Service.ServiceProduitService;
-import com.NND.tech.Structure_Backend.entities.ServiceProduit;
+import com.NND.tech.Structure_Backend.service.ServiceProduitService;
+import com.NND.tech.Structure_Backend.model.entity.ServiceEntity;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ public class AdminController {
             Principal principal
     ) {
         try {
-            ServiceProduit produit = serviceProduitService.createServiceProduit(request, principal.getName());
+            ServiceEntity produit = serviceProduitService.createServiceProduit(request, principal.getName());
             return ResponseEntity.status(HttpStatus.CREATED).body(produit);
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body("Erreur métier : " + e.getMessage());
@@ -44,10 +44,12 @@ public class AdminController {
             Principal principal
     ) {
         try {
-            ServiceProduit produit = serviceProduitService.updateServiceProduit(id, request, principal.getName());
+            ServiceEntity produit = serviceProduitService.updateServiceProduit(id, request, principal.getName());
             return ResponseEntity.ok(produit);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erreur : " + e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Erreur d'autorisation : " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne : " + e.getMessage());
         }

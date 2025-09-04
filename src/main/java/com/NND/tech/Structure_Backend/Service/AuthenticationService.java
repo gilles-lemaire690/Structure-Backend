@@ -3,10 +3,10 @@ package com.NND.tech.Structure_Backend.Service;
 import com.NND.tech.Structure_Backend.DTO.AuthenticationRequest;
 import com.NND.tech.Structure_Backend.DTO.AuthenticationResponse;
 import com.NND.tech.Structure_Backend.DTO.RegisterRequest;
-import com.NND.tech.Structure_Backend.Repository.UtilisateurRepository;
+import com.NND.tech.Structure_Backend.repository.UserRepository;
 import com.NND.tech.Structure_Backend.config.JwtService;
-import com.NND.tech.Structure_Backend.entities.Utilisateur;
-import com.NND.tech.Structure_Backend.entities.RoleType;
+import com.NND.tech.Structure_Backend.model.entity.RoleType;
+import com.NND.tech.Structure_Backend.model.entity.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,15 +23,15 @@ public class AuthenticationService {
 
     private static final Logger logger = Logger.getLogger(AuthenticationService.class.getName());
 
-    private final UtilisateurRepository repository;
+    private final UserRepository repository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthenticationService(UtilisateurRepository repository,
-                                 JwtService jwtService,
-                                 AuthenticationManager authenticationManager,
-                                 PasswordEncoder passwordEncoder) {
+    public AuthenticationService(UserRepository repository,
+                               JwtService jwtService,
+                               AuthenticationManager authenticationManager,
+                               PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
@@ -51,8 +51,8 @@ public class AuthenticationService {
             );
 
             // Récupération de l'utilisateur
-            var user = repository.findByEmail(request.getEmail())
-                    .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+            User user = repository.findByEmail(request.getEmail())
+                    .orElseThrow(() -> new BadCredentialsException("Email ou mot de passe incorrect"));
 
             // Générer le token
             var jwtToken = jwtService.generateToken(user);
@@ -83,39 +83,42 @@ public class AuthenticationService {
         validateRegisterRequest(request);
 
         // Vérifier si l'utilisateur existe déjà
-        Optional<Utilisateur> existingUser = repository.findByEmail(request.getEmail());
+        Optional<User> existingUser = repository.findByEmail(request.getEmail());
         if (existingUser.isPresent()) {
             throw new IllegalArgumentException("Un utilisateur avec cet email existe déjà");
         }
 
         try {
-            // Créer un nouvel utilisateur
-            var user = new Utilisateur();
-            user.setEmail(request.getEmail());
-            user.setMotDePasse(passwordEncoder.encode(request.getPassword()));
-            user.setNom(request.getLastName());
-            user.setPrenom(request.getFirstName());
-            user.setTelephone(request.getTelephone());
+            // Créer un nouvel utilisateur avec le builder
+            User.UserBuilder userBuilder = User.builder()
+                    .email(request.getEmail())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .firstName(request.getFirstName())
+                    .lastName(request.getLastName())
+                    .phone(request.getTelephone())
+                    .active(true);
 
-            // Format correct du rôle
+            // Gestion du rôle
             String roleStr = request.getRole();
-if (roleStr != null) {
-    roleStr = roleStr.trim().replace("-", "_").replace(" ", "_").toUpperCase();
-    // Recherche insensible à la casse
-    RoleType found = null;
-    for (RoleType type : RoleType.values()) {
-        if (type.name().equalsIgnoreCase(roleStr)) {
-            found = type;
-            break;
-        }
-    }
-    if (found == null) {
-        throw new IllegalArgumentException("Rôle invalide : " + request.getRole());
-    }
-    user.setRole(found);
-} else {
-    throw new IllegalArgumentException("Le champ 'role' est requis");
-}
+            if (roleStr != null) {
+                roleStr = roleStr.trim().replace("-", "_").replace(" ", "_").toUpperCase();
+                // Recherche insensible à la casse
+                RoleType found = null;
+                for (RoleType type : RoleType.values()) {
+                    if (type.name().equalsIgnoreCase(roleStr)) {
+                        found = type;
+                        break;
+                    }
+                }
+                if (found == null) {
+                    throw new IllegalArgumentException("Rôle invalide : " + request.getRole());
+                }
+                userBuilder.role(found);
+            } else {
+                throw new IllegalArgumentException("Le champ 'role' est requis");
+            }
+
+            User user = userBuilder.build();
 
             repository.save(user);
 
