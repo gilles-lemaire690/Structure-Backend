@@ -1,14 +1,12 @@
 package com.NND.tech.Structure_Backend.controller;
 
 import com.NND.tech.Structure_Backend.StructureBackendApplication;
-import com.NND.tech.Structure_Backend.model.Structure;
-import com.NND.tech.Structure_Backend.model.Transaction;
-import com.NND.tech.Structure_Backend.model.TransactionStatus;
-import com.NND.tech.Structure_Backend.model.User;
+import com.NND.tech.Structure_Backend.model.entity.Structure;
+import com.NND.tech.Structure_Backend.model.entity.Transaction;
+import com.NND.tech.Structure_Backend.model.entity.User;
 import com.NND.tech.Structure_Backend.repository.StructureRepository;
 import com.NND.tech.Structure_Backend.repository.TransactionRepository;
 import com.NND.tech.Structure_Backend.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +18,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
+import java.time.LocalDate;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -46,7 +42,6 @@ class TransactionControllerIntegrationTest {
     @Autowired
     private StructureRepository structureRepository;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private Transaction testTransaction;
     private User testUser;
     private Structure testStructure;
@@ -66,8 +61,8 @@ class TransactionControllerIntegrationTest {
         
         // Créer un utilisateur de test
         testUser = new User();
-        testUser.setFirstname("John");
-        testUser.setLastname("Doe");
+        testUser.setFirstName("John");
+        testUser.setLastName("Doe");
         testUser.setEmail("john.doe@example.com");
         testUser.setStructure(testStructure);
         testUser = userRepository.save(testUser);
@@ -75,9 +70,7 @@ class TransactionControllerIntegrationTest {
         // Créer une transaction de test
         testTransaction = new Transaction();
         testTransaction.setAmount(new BigDecimal("100.00"));
-        testTransaction.setStatus(TransactionStatus.PENDING);
-        testTransaction.setTransactionDate(LocalDateTime.now());
-        testTransaction.setUser(testUser);
+        testTransaction.setTransactionDate(LocalDate.now());
         testTransaction.setStructure(testStructure);
         testTransaction = transactionRepository.save(testTransaction);
     }
@@ -150,9 +143,7 @@ class TransactionControllerIntegrationTest {
         // Ajouter une autre transaction pour le même utilisateur et structure
         Transaction anotherTransaction = new Transaction();
         anotherTransaction.setAmount(new BigDecimal("50.00"));
-        anotherTransaction.setStatus(TransactionStatus.COMPLETED);
-        anotherTransaction.setTransactionDate(LocalDateTime.now());
-        anotherTransaction.setUser(testUser);
+        anotherTransaction.setTransactionDate(LocalDate.now());
         anotherTransaction.setStructure(testStructure);
         transactionRepository.save(anotherTransaction);
 
@@ -173,7 +164,7 @@ class TransactionControllerIntegrationTest {
     @Test
     void getTransactionsByDateRange_ShouldReturnFilteredTransactions() throws Exception {
         // Arrange
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
         String startDate = now.minusDays(1).toString();
         String endDate = now.plusDays(1).toString();
 

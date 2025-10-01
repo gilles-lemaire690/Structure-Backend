@@ -1,7 +1,7 @@
 package com.NND.tech.Structure_Backend.service;
 
-import com.NND.tech.Structure_Backend.dto.StatsDto;
-import com.NND.tech.Structure_Backend.model.Structure;
+import com.NND.tech.Structure_Backend.DTO.StatsDto;
+import com.NND.tech.Structure_Backend.model.entity.Structure;
 import com.NND.tech.Structure_Backend.repository.StructureRepository;
 import com.NND.tech.Structure_Backend.repository.TransactionRepository;
 import com.NND.tech.Structure_Backend.repository.UserRepository;

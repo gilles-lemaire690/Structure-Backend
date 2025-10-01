@@ -1,7 +1,7 @@
 package com.NND.tech.Structure_Backend.service;
 
-import com.NND.tech.Structure_Backend.dto.TransactionDto;
-import com.NND.tech.Structure_Backend.exception.ResourceNotFoundException;
+import com.NND.tech.Structure_Backend.DTO.TransactionDto;
+import com.NND.tech.Structure_Backend.Exception.ResourceNotFoundException;
 import com.NND.tech.Structure_Backend.mapper.TransactionMapper;
 import com.NND.tech.Structure_Backend.model.entity.Transaction;
 import com.NND.tech.Structure_Backend.repository.TransactionRepository;

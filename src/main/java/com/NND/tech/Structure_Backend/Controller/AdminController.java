@@ -1,4 +1,4 @@
-package com.NND.tech.Structure_Backend.Controller;
+package com.NND.tech.Structure_Backend.controller;
 
 import com.NND.tech.Structure_Backend.DTO.ServiceProduitRequest;
 import com.NND.tech.Structure_Backend.service.ServiceProduitService;

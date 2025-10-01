@@ -78,4 +78,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("category") String category,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
+    
+    /**
+     * Récupère les transactions pour une structure spécifique
+     * @param structureId l'ID de la structure
+     * @return liste des transactions pour cette structure
+     */
+    List<Transaction> findByStructureId(Long structureId);
 }

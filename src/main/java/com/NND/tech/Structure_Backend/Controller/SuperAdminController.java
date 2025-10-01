@@ -1,6 +1,7 @@
-package com.NND.tech.Structure_Backend.Controller;
+package com.NND.tech.Structure_Backend.controller;
 
 import com.NND.tech.Structure_Backend.DTO.RegisterAdminRequest;
+import com.NND.tech.Structure_Backend.DTO.StructureDto;
 import com.NND.tech.Structure_Backend.DTO.StructureRequest;
 import com.NND.tech.Structure_Backend.service.StructureService;
 import com.NND.tech.Structure_Backend.model.entity.Structure;
@@ -24,8 +25,8 @@ public class SuperAdminController {
     }
 
     @PostMapping("/structures")
-    public ResponseEntity<Structure> createStructure(@Valid @RequestBody StructureRequest request) {
-        return ResponseEntity.ok(structureService.createStructure(request));
+    public ResponseEntity<StructureDto> createStructure(@Valid @RequestBody StructureRequest request) {
+        return ResponseEntity.ok(structureService.create(request));
     }
 
     @PostMapping("/structures/{id}/admin")

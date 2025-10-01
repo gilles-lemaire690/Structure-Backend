@@ -1,6 +1,6 @@
 package com.NND.tech.Structure_Backend.mapper;
 
-import com.NND.tech.Structure_Backend.dto.TransactionDto;
+import com.NND.tech.Structure_Backend.DTO.TransactionDto;
 import com.NND.tech.Structure_Backend.model.entity.Transaction;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

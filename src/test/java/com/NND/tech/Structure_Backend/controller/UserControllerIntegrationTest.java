@@ -1,9 +1,9 @@
 package com.NND.tech.Structure_Backend.controller;
 
 import com.NND.tech.Structure_Backend.StructureBackendApplication;
-import com.NND.tech.Structure_Backend.model.RoleType;
-import com.NND.tech.Structure_Backend.model.Structure;
-import com.NND.tech.Structure_Backend.model.User;
+import com.NND.tech.Structure_Backend.model.entity.RoleType;
+import com.NND.tech.Structure_Backend.model.entity.Structure;
+import com.NND.tech.Structure_Backend.model.entity.User;
 import com.NND.tech.Structure_Backend.repository.StructureRepository;
 import com.NND.tech.Structure_Backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -62,8 +62,8 @@ class UserControllerIntegrationTest {
         
         // Créer un utilisateur de test
         testUser = new User();
-        testUser.setFirstname("John");
-        testUser.setLastname("Doe");
+        testUser.setFirstName("John");
+        testUser.setLastName("Doe");
         testUser.setEmail("john.doe@example.com");
         testUser.setPassword(passwordEncoder.encode(testPassword));
         testUser.setRole(RoleType.ADMIN);
@@ -75,7 +75,7 @@ class UserControllerIntegrationTest {
     void createUser_ShouldReturnCreatedUser() throws Exception {
         // Arrange
         String requestBody = String.format(
-            "{\"firstname\":\"Jane\",\"lastname\":\"Smith\",\"email\":\"jane.smith@example.com\"," +
+            "{\"firstName\":\"Jane\",\"lastName\":\"Smith\",\"email\":\"jane.smith@example.com\"," +
             "\"password\":\"%s\",\"role\":\"USER\",\"structureId\":%d}",
             testPassword,
             testStructure.getId()
@@ -86,8 +86,8 @@ class UserControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.firstname").value("Jane"))
-                .andExpect(jsonPath("$.lastname").value("Smith"))
+                .andExpect(jsonPath("$.firstName").value("Jane"))
+                .andExpect(jsonPath("$.lastName").value("Smith"))
                 .andExpect(jsonPath("$.email").value("jane.smith@example.com"))
                 .andExpect(jsonPath("$.role").value("USER"));
     }
@@ -98,8 +98,8 @@ class UserControllerIntegrationTest {
         mockMvc.perform(get("/api/users/" + testUser.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(testUser.getId()))
-                .andExpect(jsonPath("$.firstname").value("John"))
-                .andExpect(jsonPath("$.lastname").value("Doe"))
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"))
                 .andExpect(jsonPath("$.email").value("john.doe@example.com"))
                 .andExpect(jsonPath("$.role").value("ADMIN"));
     }
@@ -141,7 +141,7 @@ class UserControllerIntegrationTest {
     void updateUser_ShouldReturnUpdatedUser() throws Exception {
         // Arrange
         String requestBody = String.format(
-            "{\"firstname\":\"John Updated\",\"lastname\":\"Doe Updated\"," +
+            "{\"firstName\":\"John Updated\",\"lastName\":\"Doe Updated\"," +
             "\"email\":\"john.updated@example.com\",\"role\":\"ADMIN\",\"structureId\":%d}",
             testStructure.getId()
         );
@@ -151,8 +151,8 @@ class UserControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstname").value("John Updated"))
-                .andExpect(jsonPath("$.lastname").value("Doe Updated"))
+                .andExpect(jsonPath("$.firstName").value("John Updated"))
+                .andExpect(jsonPath("$.lastName").value("Doe Updated"))
                 .andExpect(jsonPath("$.email").value("john.updated@example.com"));
     }
 

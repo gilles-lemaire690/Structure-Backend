@@ -1,8 +1,8 @@
 package com.NND.tech.Structure_Backend.controller;
 
 import com.NND.tech.Structure_Backend.StructureBackendApplication;
-import com.NND.tech.Structure_Backend.model.Service;
-import com.NND.tech.Structure_Backend.model.Structure;
+import com.NND.tech.Structure_Backend.model.entity.ServiceEntity;
+import com.NND.tech.Structure_Backend.model.entity.Structure;
 import com.NND.tech.Structure_Backend.repository.ServiceRepository;
 import com.NND.tech.Structure_Backend.repository.StructureRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +40,7 @@ class ServiceControllerIntegrationTest {
     private StructureRepository structureRepository;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private Service testService;
+    private ServiceEntity testService;
     private Structure testStructure;
 
     @BeforeEach
@@ -56,7 +56,7 @@ class ServiceControllerIntegrationTest {
         testStructure = structureRepository.save(testStructure);
         
         // Créer un service de test
-        testService = new Service();
+        testService = new ServiceEntity();
         testService.setName("Test Service");
         testService.setDescription("Test Description");
         testService.setPrice(new BigDecimal("100.00"));
@@ -161,7 +161,7 @@ class ServiceControllerIntegrationTest {
     @Test
     void searchServices_ShouldReturnMatchingServices() throws Exception {
         // Ajouter un autre service pour le test de recherche
-        Service anotherService = new Service();
+        ServiceEntity anotherService = new ServiceEntity();
         anotherService.setName("Another Service");
         anotherService.setDescription("Another Description");
         anotherService.setPrice(new BigDecimal("75.00"));

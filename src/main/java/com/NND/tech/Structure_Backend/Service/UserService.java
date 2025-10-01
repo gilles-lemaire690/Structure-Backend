@@ -1,7 +1,7 @@
 package com.NND.tech.Structure_Backend.service;
 
-import com.NND.tech.Structure_Backend.dto.UserDto;
-import com.NND.tech.Structure_Backend.exception.ResourceNotFoundException;
+import com.NND.tech.Structure_Backend.DTO.UserDto;
+import com.NND.tech.Structure_Backend.Exception.ResourceNotFoundException;
 import com.NND.tech.Structure_Backend.mapper.UserMapper;
 import com.NND.tech.Structure_Backend.model.entity.User;
 import com.NND.tech.Structure_Backend.repository.UserRepository;

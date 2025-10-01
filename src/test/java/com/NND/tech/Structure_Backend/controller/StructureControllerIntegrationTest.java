@@ -1,8 +1,8 @@
 package com.NND.tech.Structure_Backend.controller;
 
 import com.NND.tech.Structure_Backend.StructureBackendApplication;
-import com.NND.tech.Structure_Backend.dto.StructureDto;
-import com.NND.tech.Structure_Backend.model.Structure;
+import com.NND.tech.Structure_Backend.DTO.StructureDto;
+import com.NND.tech.Structure_Backend.model.entity.Structure;
 import com.NND.tech.Structure_Backend.repository.StructureRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +22,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.timeout;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -50,7 +49,7 @@ class StructureControllerIntegrationTest {
         testStructure = new Structure();
         testStructure.setName("Test Structure");
         testStructure.setAddress("123 Test St");
-        testStructure.setIsActive(true);
+        testStructure.setActive(true);
         testStructure = structureRepository.save(testStructure);
     }
 
@@ -60,7 +59,7 @@ class StructureControllerIntegrationTest {
         StructureDto newStructure = new StructureDto();
         newStructure.setName("New Structure");
         newStructure.setAddress("456 New St");
-        newStructure.setIsActive(true);
+        newStructure.setActive(true);
 
         // Act & Assert
         mockMvc.perform(post("/api/structures")
@@ -69,7 +68,7 @@ class StructureControllerIntegrationTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("New Structure"))
                 .andExpect(jsonPath("$.address").value("456 New St"))
-                .andExpect(jsonPath("$.isActive").value(true));
+                .andExpect(jsonPath("$.active").value(true));
     }
 
     @Test
@@ -111,7 +110,7 @@ class StructureControllerIntegrationTest {
         StructureDto updatedStructure = new StructureDto();
         updatedStructure.setName("Updated Structure");
         updatedStructure.setAddress("Updated Address");
-        updatedStructure.setIsActive(false);
+        updatedStructure.setActive(false);
 
         // Act & Assert
         mockMvc.perform(put("/api/structures/" + testStructure.getId())
@@ -120,7 +119,7 @@ class StructureControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Updated Structure"))
                 .andExpect(jsonPath("$.address").value("Updated Address"))
-                .andExpect(jsonPath("$.isActive").value(false));
+                .andExpect(jsonPath("$.active").value(false));
     }
 
     @Test
@@ -175,7 +174,7 @@ class StructureControllerIntegrationTest {
             Structure structure = new Structure();
             structure.setName("Structure " + i);
             structure.setAddress("Address " + i);
-            structure.setIsActive(true);
+            structure.setActive(true);
             structureRepository.save(structure);
         }
         

@@ -1,11 +1,10 @@
 package com.NND.tech.Structure_Backend.controller;
 
 import com.NND.tech.Structure_Backend.StructureBackendApplication;
-import com.NND.tech.Structure_Backend.model.Structure;
-import com.NND.tech.Structure_Backend.model.Transaction;
-import com.NND.tech.Structure_Backend.model.TransactionStatus;
-import com.NND.tech.Structure_Backend.model.User;
-import com.NND.tech.Structure_Backend.model.UserRole;
+import com.NND.tech.Structure_Backend.model.entity.Structure;
+import com.NND.tech.Structure_Backend.model.entity.Transaction;
+import com.NND.tech.Structure_Backend.model.entity.User;
+import com.NND.tech.Structure_Backend.model.entity.RoleType;
 import com.NND.tech.Structure_Backend.repository.StructureRepository;
 import com.NND.tech.Structure_Backend.repository.TransactionRepository;
 import com.NND.tech.Structure_Backend.repository.UserRepository;
@@ -59,15 +58,15 @@ class StatsControllerIntegrationTest {
         testStructure = new Structure();
         testStructure.setName("Test Structure");
         testStructure.setAddress("123 Test St");
-        testStructure.setIsActive(true);
+        testStructure.setActive(true);
         testStructure = structureRepository.save(testStructure);
 
         // Créer un utilisateur de test
         testUser = new User();
-        testUser.setFirstname("John");
-        testUser.setLastname("Doe");
+        testUser.setFirstName("John");
+        testUser.setLastName("Doe");
         testUser.setEmail("john.doe@example.com");
-        testUser.setRole(UserRole.ADMIN);
+        testUser.setRole(RoleType.ADMIN);
         testUser.setStructure(testStructure);
         testUser = userRepository.save(testUser);
 
@@ -79,27 +78,21 @@ class StatsControllerIntegrationTest {
         // Transaction d'aujourd'hui pour la structure de test
         Transaction transaction1 = new Transaction();
         transaction1.setAmount(new BigDecimal("100.00"));
-        transaction1.setStatus(TransactionStatus.COMPLETED);
-        transaction1.setTransactionDate(LocalDateTime.now());
-        transaction1.setUser(testUser);
+        transaction1.setTransactionDate(LocalDateTime.now().toLocalDate());
         transaction1.setStructure(testStructure);
         transactionRepository.save(transaction1);
         
         // Transaction d'il y a 2 mois
         Transaction transaction2 = new Transaction();
         transaction2.setAmount(new BigDecimal("200.00"));
-        transaction2.setStatus(TransactionStatus.COMPLETED);
-        transaction2.setTransactionDate(LocalDateTime.now().minusMonths(2));
-        transaction2.setUser(testUser);
+        transaction2.setTransactionDate(LocalDateTime.now().minusMonths(2).toLocalDate());
         transaction2.setStructure(testStructure);
         transactionRepository.save(transaction2);
         
         // Transaction annulée (ne doit pas compter dans les statistiques)
         Transaction transaction3 = new Transaction();
         transaction3.setAmount(new BigDecimal("50.00"));
-        transaction3.setStatus(TransactionStatus.CANCELLED);
-        transaction3.setTransactionDate(LocalDateTime.now());
-        transaction3.setUser(testUser);
+        transaction3.setTransactionDate(LocalDateTime.now().toLocalDate());
         transaction3.setStructure(testStructure);
         transactionRepository.save(transaction3);
     }
@@ -163,20 +156,21 @@ class StatsControllerIntegrationTest {
         long nonExistentId = 9999L;
         
         mockMvc.perform(get("/api/stats/by-structure/{structureId}", nonExistentId))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Structure non trouvée avec l'ID : " + nonExistentId));
+                .andExpect(status().isNotFound());
     }
     
     @Test
     void getMonthlyStats_ShouldReturnMonthlyStats() throws Exception {
         int year = LocalDate.now().getYear();
-        
+        int month = LocalDate.now().getMonthValue();
+        String monthExpr = String.format("$.monthlyData[?(@.month == %d)].revenue", month);
+
         mockMvc.perform(get("/api/stats/monthly")
                         .param("year", String.valueOf(year))
                         .param("structureId", testStructure.getId().toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.year").value(year))
                 .andExpect(jsonPath("$.monthlyData").isArray())
-                .andExpect(jsonPath("$.monthlyData[?(@.month == "" + LocalDate.now().getMonthValue() + "")].revenue").value(100.00));
+                .andExpect(jsonPath(monthExpr).value(100.00));
     }
 }

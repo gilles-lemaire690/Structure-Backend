@@ -1,6 +1,6 @@
 package com.NND.tech.Structure_Backend.controller;
 
-import com.NND.tech.Structure_Backend.dto.StatsDto;
+import com.NND.tech.Structure_Backend.DTO.StatsDto;
 import com.NND.tech.Structure_Backend.service.StatsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

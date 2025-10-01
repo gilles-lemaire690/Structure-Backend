@@ -1,15 +1,15 @@
 package com.NND.tech.Structure_Backend.service;
 
-import com.NND.tech.Structure_Backend.dto.StructureDto;
-import com.NND.tech.Structure_Backend.dto.request.RegisterAdminRequest;
-import com.NND.tech.Structure_Backend.dto.request.StructureRequest;
-import com.NND.tech.Structure_Backend.exception.ResourceNotFoundException;
+import com.NND.tech.Structure_Backend.DTO.StructureDto;
+import com.NND.tech.Structure_Backend.DTO.RegisterAdminRequest;
+import com.NND.tech.Structure_Backend.DTO.StructureRequest;
+import com.NND.tech.Structure_Backend.Exception.ResourceNotFoundException;
 import com.NND.tech.Structure_Backend.mapper.StructureMapper;
 import com.NND.tech.Structure_Backend.model.entity.Structure;
-import com.NND.tech.Structure_Backend.model.entity.Utilisateur;
-import com.NND.tech.Structure_Backend.model.enums.RoleType;
+import com.NND.tech.Structure_Backend.model.entity.User;
+import com.NND.tech.Structure_Backend.model.entity.RoleType;
 import com.NND.tech.Structure_Backend.repository.StructureRepository;
-import com.NND.tech.Structure_Backend.repository.UtilisateurRepository;
+import com.NND.tech.Structure_Backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class StructureService {
 
     private final StructureRepository structureRepository;
-    private final UtilisateurRepository utilisateurRepository;
+    private final UserRepository userRepository;
     private final StructureMapper structureMapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -49,26 +49,15 @@ public class StructureService {
         }
         
         Structure structure = new Structure();
-        structure.setNom(request.getNom());
+        structure.setName(request.getNom());
         structure.setDescription(request.getDescription());
-        structure.setAdresse(request.getAdresse());
-        structure.setLogoUrl(request.getLogoUrl());
-        structure.setServicesProduits(new ArrayList<>()); // éviter null
+        structure.setAddress(request.getAdresse());
+        structure.setImageUrl(request.getLogoUrl());
+        structure.setPhone(request.getTelephone());
+        structure.setEmail(request.getEmail());
         structure.setActive(true);
 
-        // Création de l'admin
-        Utilisateur admin = new Utilisateur();
-        admin.setNom(request.getNom());
-        admin.setPrenom(request.getPrenom());
-        admin.setEmail(request.getEmail());
-        admin.setTelephone(request.getTelephone());
-        admin.setMotDePasse(passwordEncoder.encode(request.getPassword()));
-        admin.setRole(RoleType.ADMIN);
-
-        Utilisateur savedAdmin = utilisateurRepository.save(admin);
-        structure.setAdmin(savedAdmin);
         Structure savedStructure = structureRepository.save(structure);
-
         return structureMapper.toDto(savedStructure);
     }
 
@@ -78,12 +67,31 @@ public class StructureService {
                 .orElseThrow(() -> new ResourceNotFoundException("Structure non trouvée avec l'id : " + id));
         
         // Vérification du nom unique si modifié
-        if (!existingStructure.getNom().equals(structureDto.getName()) && 
+        if (!existingStructure.getName().equals(structureDto.getName()) && 
             structureRepository.existsByName(structureDto.getName())) {
             throw new IllegalArgumentException("Une autre structure avec ce nom existe déjà");
         }
         
-        structureMapper.updateFromDto(structureDto, existingStructure);
+        // Update only non-null fields from the DTO
+        if (structureDto.getName() != null) {
+            existingStructure.setName(structureDto.getName());
+        }
+        if (structureDto.getDescription() != null) {
+            existingStructure.setDescription(structureDto.getDescription());
+        }
+        if (structureDto.getAddress() != null) {
+            existingStructure.setAddress(structureDto.getAddress());
+        }
+        if (structureDto.getImageUrl() != null) {
+            existingStructure.setImageUrl(structureDto.getImageUrl());
+        }
+        if (structureDto.getPhone() != null) {
+            existingStructure.setPhone(structureDto.getPhone());
+        }
+        if (structureDto.getEmail() != null) {
+            existingStructure.setEmail(structureDto.getEmail());
+        }
+        
         Structure updatedStructure = structureRepository.save(existingStructure);
         return structureMapper.toDto(updatedStructure);
     }
@@ -99,28 +107,20 @@ public class StructureService {
     }
 
     @Transactional
-    public Utilisateur createAdminForStructure(Long structureId, RegisterAdminRequest request) {
+    public User createAdminForStructure(Long structureId, RegisterAdminRequest request) {
         Structure structure = structureRepository.findByIdAndActiveTrue(structureId)
                 .orElseThrow(() -> new ResourceNotFoundException("Structure non trouvée avec l'id : " + structureId));
 
-        if (structure.getAdmin() != null) {
-            throw new IllegalStateException("Cette structure a déjà un administrateur.");
-        }
-
-        Utilisateur admin = new Utilisateur();
-        admin.setNom(request.getNom());
-        admin.setPrenom(request.getPrenom());
+        User admin = new User();
+        admin.setFirstName(request.getPrenom());
+        admin.setLastName(request.getNom());
         admin.setEmail(request.getEmail());
-        admin.setTelephone(request.getTelephone());
-        admin.setMotDePasse(passwordEncoder.encode(request.getPassword()));
+        admin.setPhone(request.getTelephone());
+        admin.setPassword(passwordEncoder.encode(request.getPassword()));
         admin.setRole(RoleType.ADMIN);
+        admin.setStructure(structure);
 
-        Utilisateur savedAdmin = utilisateurRepository.save(admin);
-
-
-        structure.setAdmin(savedAdmin);
-        structureRepository.save(structure);
-
+        User savedAdmin = userRepository.save(admin);
         return savedAdmin;
     }
 }

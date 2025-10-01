@@ -45,11 +45,12 @@ class AuthControllerTest {
             "password123"
         );
         
-        AuthenticationResponse response = AuthenticationResponse.builder()
-            .token("test-jwt-token")
-            .email("admin@example.com")
-            .role("ADMIN")
-            .build();
+        AuthenticationResponse response = new AuthenticationResponse(
+            "test-jwt-token",
+            "admin@example.com",
+            "ADMIN",
+            3600L
+        );
             
         when(authenticationService.authenticate(any(AuthenticationRequest.class)))
             .thenReturn(response);
@@ -68,17 +69,20 @@ class AuthControllerTest {
     void register_ShouldReturnToken_WhenRegistrationIsSuccessful() throws Exception {
         // Arrange
         RegisterRequest request = new RegisterRequest(
-            "John", 
-            "Doe", 
-            "john.doe@example.com", 
-            "password123"
+            "John",
+            "Doe",
+            "john.doe@example.com",
+            "password123",
+            "+33123456789",
+            "USER"
         );
         
-        AuthenticationResponse response = AuthenticationResponse.builder()
-            .token("test-jwt-token")
-            .email("john.doe@example.com")
-            .role("USER")
-            .build();
+        AuthenticationResponse response = new AuthenticationResponse(
+            "test-jwt-token",
+            "john.doe@example.com",
+            "USER",
+            3600L
+        );
             
         when(authenticationService.register(any(RegisterRequest.class)))
             .thenReturn(response);

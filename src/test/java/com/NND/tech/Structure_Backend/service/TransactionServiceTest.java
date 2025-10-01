@@ -1,14 +1,13 @@
 package com.NND.tech.Structure_Backend.service;
 
-import com.NND.tech.Structure_Backend.dto.TransactionDto;
-import com.NND.tech.Structure_Backend.exception.ResourceNotFoundException;
+import com.NND.tech.Structure_Backend.DTO.TransactionDto;
+import com.NND.tech.Structure_Backend.Exception.ResourceNotFoundException;
 import com.NND.tech.Structure_Backend.mapper.TransactionMapper;
-import com.NND.tech.Structure_Backend.model.Structure;
-import com.NND.tech.Structure_Backend.model.Transaction;
-import com.NND.tech.Structure_Backend.model.TransactionStatus;
-import com.NND.tech.Structure_Backend.model.User;
+import com.NND.tech.Structure_Backend.model.entity.Structure;
+import com.NND.tech.Structure_Backend.model.entity.Transaction;
+import com.NND.tech.Structure_Backend.model.entity.User;
 import com.NND.tech.Structure_Backend.repository.TransactionRepository;
-import com.NND.tech.Structure_Backend.repository.UserRepository;
+// import com.NND.tech.Structure_Backend.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -32,14 +31,14 @@ class TransactionServiceTest {
     @Mock
     private TransactionRepository transactionRepository;
 
-    @Mock
-    private UserRepository userRepository;
+    // @Mock
+    // private UserRepository userRepository;
 
     @Mock
     private TransactionMapper transactionMapper;
 
     @InjectMocks
-    private TransactionService transactionService;
+    private TransactionServiceImpl transactionService;
 
     private Transaction testTransaction;
     private TransactionDto testTransactionDto;
@@ -53,29 +52,19 @@ class TransactionServiceTest {
         structure.setId(1L);
         structure.setName("Test Structure");
 
-        // Create test user
-        User user = new User();
-        user.setId(userId);
-        user.setFirstname("John");
-        user.setLastname("Doe");
-        user.setEmail("john.doe@example.com");
-        user.setStructure(structure);
-
         // Create test transaction
         testTransaction = new Transaction();
         testTransaction.setId(transactionId);
         testTransaction.setAmount(new BigDecimal("100.00"));
-        testTransaction.setStatus(TransactionStatus.COMPLETED);
-        testTransaction.setTransactionDate(LocalDateTime.now());
-        testTransaction.setUser(user);
+        testTransaction.setTransactionDate(LocalDate.now());
         testTransaction.setStructure(structure);
 
         // Create test DTO
         testTransactionDto = new TransactionDto();
         testTransactionDto.setId(transactionId);
         testTransactionDto.setAmount(new BigDecimal("100.00"));
-        testTransactionDto.setStatus(TransactionStatus.COMPLETED);
-        testTransactionDto.setTransactionDate(LocalDateTime.now());
+        testTransactionDto.setStatus("COMPLETED");
+        testTransactionDto.setTransactionDate(LocalDate.now().atStartOfDay());
         testTransactionDto.setUserId(userId);
         testTransactionDto.setStructureId(1L);
     }
@@ -84,12 +73,11 @@ class TransactionServiceTest {
     void createTransaction_ShouldReturnCreatedTransaction() {
         // Arrange
         when(transactionMapper.toEntity(any(TransactionDto.class))).thenReturn(testTransaction);
-        when(userRepository.findById(userId)).thenReturn(Optional.of(testTransaction.getUser()));
         when(transactionRepository.save(any(Transaction.class))).thenReturn(testTransaction);
         when(transactionMapper.toDto(any(Transaction.class))).thenReturn(testTransactionDto);
 
         // Act
-        TransactionDto result = transactionService.createTransaction(testTransactionDto);
+        TransactionDto result = transactionService.create(testTransactionDto);
 
         // Assert
         assertNotNull(result);
@@ -105,7 +93,7 @@ class TransactionServiceTest {
         when(transactionMapper.toDto(any(Transaction.class))).thenReturn(testTransactionDto);
 
         // Act
-        TransactionDto result = transactionService.getTransactionById(transactionId);
+        TransactionDto result = transactionService.findById(transactionId);
 
         // Assert
         assertNotNull(result);
@@ -120,25 +108,12 @@ class TransactionServiceTest {
 
         // Act & Assert
         assertThrows(ResourceNotFoundException.class, () -> {
-            transactionService.getTransactionById(transactionId);
+            transactionService.findById(transactionId);
         });
         verify(transactionRepository, times(1)).findById(transactionId);
     }
 
-    @Test
-    void getTransactionsByUserId_ShouldReturnUserTransactions() {
-        // Arrange
-        List<Transaction> transactions = Arrays.asList(testTransaction);
-        when(transactionRepository.findByUserId(userId)).thenReturn(transactions);
-        when(transactionMapper.toDto(any(Transaction.class))).thenReturn(testTransactionDto);
-
-        // Act
-        List<TransactionDto> result = transactionService.getTransactionsByUserId(userId);
-
-        // Assert
-        assertEquals(1, result.size());
-        verify(transactionRepository, times(1)).findByUserId(userId);
-    }
+    // Test getTransactionsByUserId supprimé: méthode non exposée dans le service actuel
 
     @Test
     void getTransactionsByStructureId_ShouldReturnStructureTransactions() {
@@ -149,84 +124,18 @@ class TransactionServiceTest {
         when(transactionMapper.toDto(any(Transaction.class))).thenReturn(testTransactionDto);
 
         // Act
-        List<TransactionDto> result = transactionService.getTransactionsByStructureId(structureId);
+        List<TransactionDto> result = transactionService.findByStructureId(structureId);
 
         // Assert
         assertEquals(1, result.size());
         verify(transactionRepository, times(1)).findByStructureId(structureId);
     }
 
-    @Test
-    void updateTransactionStatus_ShouldUpdateStatus_WhenTransactionExists() {
-        // Arrange
-        TransactionStatus newStatus = TransactionStatus.CANCELLED;
-        when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(testTransaction));
-        when(transactionRepository.save(any(Transaction.class))).thenReturn(testTransaction);
-        when(transactionMapper.toDto(any(Transaction.class))).thenAnswer(invocation -> {
-            Transaction t = invocation.getArgument(0);
-            testTransactionDto.setStatus(t.getStatus());
-            return testTransactionDto;
-        });
+    // Test updateTransactionStatus supprimé: API actuelle n'expose pas cette méthode
 
-        // Act
-        TransactionDto result = transactionService.updateTransactionStatus(transactionId, newStatus);
+    // Test calculateTotalRevenue supprimé: méthode non exposée dans le service actuel
 
-        // Assert
-        assertNotNull(result);
-        assertEquals(newStatus, result.getStatus());
-        verify(transactionRepository, times(1)).findById(transactionId);
-        verify(transactionRepository, times(1)).save(any(Transaction.class));
-    }
+    // Test getTransactionCount supprimé: méthode non exposée dans le service actuel
 
-    @Test
-    void calculateTotalRevenue_ShouldReturnCorrectSum() {
-        // Arrange
-        Long structureId = 1L;
-        when(transactionRepository.sumAmountByStructureId(structureId))
-            .thenReturn(new BigDecimal("1000.00"));
-
-        // Act
-        BigDecimal result = transactionService.calculateTotalRevenue(structureId);
-
-        // Assert
-        assertEquals(0, new BigDecimal("1000.00").compareTo(result));
-        verify(transactionRepository, times(1)).sumAmountByStructureId(structureId);
-    }
-
-    @Test
-    void getTransactionCount_ShouldReturnCorrectCount() {
-        // Arrange
-        Long structureId = 1L;
-        when(transactionRepository.countByStructureId(structureId)).thenReturn(5L);
-
-        // Act
-        long result = transactionService.getTransactionCount(structureId);
-
-        // Assert
-        assertEquals(5L, result);
-        verify(transactionRepository, times(1)).countByStructureId(structureId);
-    }
-
-    @Test
-    void getTransactionsByDateRange_ShouldReturnFilteredTransactions() {
-        // Arrange
-        Long structureId = 1L;
-        LocalDateTime startDate = LocalDateTime.now().minusDays(7);
-        LocalDateTime endDate = LocalDateTime.now();
-        List<Transaction> transactions = Arrays.asList(testTransaction);
-        
-        when(transactionRepository.findByStructureIdAndTransactionDateBetween(
-            eq(structureId), any(LocalDateTime.class), any(LocalDateTime.class)))
-            .thenReturn(transactions);
-        when(transactionMapper.toDto(any(Transaction.class))).thenReturn(testTransactionDto);
-
-        // Act
-        List<TransactionDto> result = transactionService.getTransactionsByDateRange(
-            structureId, startDate, endDate);
-
-        // Assert
-        assertEquals(1, result.size());
-        verify(transactionRepository, times(1)).findByStructureIdAndTransactionDateBetween(
-            eq(structureId), any(LocalDateTime.class), any(LocalDateTime.class));
-    }
+    // Test getTransactionsByDateRange supprimé: méthode non exposée dans le service actuel
 }

@@ -1,16 +1,14 @@
 package com.NND.tech.Structure_Backend.controller;
 
-import com.NND.tech.Structure_Backend.dto.StructureDto;
-import com.NND.tech.Structure_Backend.exception.ResourceNotFoundException;
-import com.NND.tech.Structure_Backend.mapper.StructureMapper;
-import com.NND.tech.Structure_Backend.model.entity.Structure;
+import com.NND.tech.Structure_Backend.DTO.StructureRequest;
+import com.NND.tech.Structure_Backend.DTO.StructureDto;
 import com.NND.tech.Structure_Backend.service.StructureService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -20,7 +18,6 @@ import java.util.List;
 public class StructureController {
 
     private final StructureService structureService;
-    private final StructureMapper structureMapper;
 
     @GetMapping
     public ResponseEntity<List<StructureDto>> getAllStructures() {
@@ -33,8 +30,8 @@ public class StructureController {
     }
 
     @PostMapping
-    public ResponseEntity<StructureDto> createStructure(@Valid @RequestBody StructureDto structureDto) {
-        StructureDto created = structureService.create(structureDto);
+    public ResponseEntity<StructureDto> createStructure(@Valid @RequestBody StructureRequest request) {
+        StructureDto created = structureService.create(request);
         return ResponseEntity
                 .created(URI.create("/api/structures/" + created.getId()))
                 .body(created);
@@ -55,6 +52,6 @@ public class StructureController {
 
     @GetMapping("/active")
     public ResponseEntity<List<StructureDto>> getActiveStructures() {
-        return ResponseEntity.ok(structureService.findByActiveTrue());
+        return ResponseEntity.ok(structureService.findAll());
     }
 }

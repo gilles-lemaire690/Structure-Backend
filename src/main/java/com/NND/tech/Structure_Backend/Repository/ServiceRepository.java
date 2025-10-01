@@ -1,4 +1,4 @@
-package com.NND.tech.Structure_Backend.Repository;
+package com.NND.tech.Structure_Backend.repository;
 
 import com.NND.tech.Structure_Backend.model.entity.ServiceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

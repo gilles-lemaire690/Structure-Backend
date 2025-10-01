@@ -1,11 +1,11 @@
 package com.NND.tech.Structure_Backend.service;
 
-import com.NND.tech.Structure_Backend.dto.UserDto;
-import com.NND.tech.Structure_Backend.exception.ResourceNotFoundException;
+import com.NND.tech.Structure_Backend.DTO.UserDto;
+import com.NND.tech.Structure_Backend.Exception.ResourceNotFoundException;
 import com.NND.tech.Structure_Backend.mapper.UserMapper;
-import com.NND.tech.Structure_Backend.model.Structure;
-import com.NND.tech.Structure_Backend.model.User;
-import com.NND.tech.Structure_Backend.model.RoleType;
+import com.NND.tech.Structure_Backend.model.entity.Structure;
+import com.NND.tech.Structure_Backend.model.entity.User;
+import com.NND.tech.Structure_Backend.model.entity.RoleType;
 import com.NND.tech.Structure_Backend.repository.StructureRepository;
 import com.NND.tech.Structure_Backend.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +40,7 @@ class UserServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userService;
 
     private User testUser;
     private UserDto testUserDto;
@@ -57,8 +57,8 @@ class UserServiceTest {
         // Create test user
         testUser = new User();
         testUser.setId(userId);
-        testUser.setFirstname("John");
-        testUser.setLastname("Doe");
+        testUser.setFirstName("John");
+        testUser.setLastName("Doe");
         testUser.setEmail("john.doe@example.com");
         testUser.setRole(RoleType.ADMIN);
         testUser.setStructure(structure);
@@ -66,24 +66,24 @@ class UserServiceTest {
         // Create test DTO
         testUserDto = new UserDto();
         testUserDto.setId(userId);
-        testUserDto.setFirstname("John");
-        testUserDto.setLastname("Doe");
+        testUserDto.setFirstName("John");
+        testUserDto.setLastName("Doe");
         testUserDto.setEmail("john.doe@example.com");
         testUserDto.setRole(RoleType.ADMIN);
         testUserDto.setStructureId(structureId);
+        testUserDto.setPassword("password123");
     }
 
     @Test
     void createUser_ShouldReturnCreatedUser() {
         // Arrange
         when(userMapper.toEntity(any(UserDto.class))).thenReturn(testUser);
-        when(structureRepository.findById(structureId)).thenReturn(Optional.of(testUser.getStructure()));
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(testUser);
         when(userMapper.toDto(any(User.class))).thenReturn(testUserDto);
 
         // Act
-        UserDto result = userService.createUser(testUserDto);
+        UserDto result = userService.create(testUserDto);
 
         // Assert
         assertNotNull(result);
@@ -98,7 +98,7 @@ class UserServiceTest {
         when(userMapper.toDto(any(User.class))).thenReturn(testUserDto);
 
         // Act
-        UserDto result = userService.getUserById(userId);
+        UserDto result = userService.findById(userId);
 
         // Assert
         assertNotNull(result);
@@ -113,7 +113,7 @@ class UserServiceTest {
 
         // Act & Assert
         assertThrows(ResourceNotFoundException.class, () -> {
-            userService.getUserById(userId);
+            userService.findById(userId);
         });
         verify(userRepository, times(1)).findById(userId);
     }
@@ -126,7 +126,7 @@ class UserServiceTest {
         when(userMapper.toDto(any(User.class))).thenReturn(testUserDto);
 
         // Act
-        UserDto result = userService.getUserByEmail(email);
+        UserDto result = userService.findByEmail(email);
 
         // Assert
         assertNotNull(result);
@@ -151,56 +151,42 @@ class UserServiceTest {
         when(userMapper.toDto(user2)).thenReturn(userDto2);
 
         // Act
-        List<UserDto> result = userService.getAllUsers();
+        List<UserDto> result = userService.findAll();
 
         // Assert
         assertEquals(2, result.size());
         verify(userRepository, times(1)).findAll();
     }
 
-    @Test
-    void getUsersByStructure_ShouldReturnUsersForStructure() {
-        // Arrange
-        List<User> users = Arrays.asList(testUser);
-        when(userRepository.findByStructureId(structureId)).thenReturn(users);
-        when(userMapper.toDto(any(User.class))).thenReturn(testUserDto);
-
-        // Act
-        List<UserDto> result = userService.getUsersByStructure(structureId);
-
-        // Assert
-        assertEquals(1, result.size());
-        verify(userRepository, times(1)).findByStructureId(structureId);
-    }
+    // Removed test for non-existent service method getUsersByStructure
 
     @Test
     void updateUser_ShouldReturnUpdatedUser() {
         // Arrange
         UserDto updatedDto = new UserDto();
-        updatedDto.setFirstname("John Updated");
-        updatedDto.setLastname("Doe Updated");
+        updatedDto.setFirstName("John Updated");
+        updatedDto.setLastName("Doe Updated");
         updatedDto.setEmail("john.updated@example.com");
         updatedDto.setRole(RoleType.ADMIN);
         updatedDto.setStructureId(structureId);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
-        when(structureRepository.findById(structureId)).thenReturn(Optional.of(testUser.getStructure()));
         when(userRepository.save(any(User.class))).thenReturn(testUser);
         when(userMapper.toDto(any(User.class))).thenAnswer(invocation -> {
             User u = invocation.getArgument(0);
-            testUserDto.setFirstname(u.getFirstname());
-            testUserDto.setLastname(u.getLastname());
+            testUserDto.setFirstName(u.getFirstName());
+            testUserDto.setLastName(u.getLastName());
             testUserDto.setEmail(u.getEmail());
             return testUserDto;
         });
 
         // Act
-        UserDto result = userService.updateUser(userId, updatedDto);
+        UserDto result = userService.update(userId, updatedDto);
 
         // Assert
         assertNotNull(result);
-        assertEquals(updatedDto.getFirstname(), result.getFirstname());
-        assertEquals(updatedDto.getLastname(), result.getLastname());
+        assertEquals(updatedDto.getFirstName(), result.getFirstName());
+        assertEquals(updatedDto.getLastName(), result.getLastName());
         assertEquals(updatedDto.getEmail(), result.getEmail());
         verify(userRepository, times(1)).findById(userId);
         verify(userRepository, times(1)).save(any(User.class));
@@ -213,7 +199,7 @@ class UserServiceTest {
         doNothing().when(userRepository).deleteById(userId);
 
         // Act
-        userService.deleteUser(userId);
+        userService.delete(userId);
 
         // Assert
         verify(userRepository, times(1)).deleteById(userId);
@@ -226,24 +212,10 @@ class UserServiceTest {
 
         // Act & Assert
         assertThrows(ResourceNotFoundException.class, () -> {
-            userService.deleteUser(userId);
+            userService.delete(userId);
         });
         verify(userRepository, never()).deleteById(anyLong());
     }
 
-    @Test
-    void updatePassword_ShouldUpdatePassword() {
-        // Arrange
-        String newPassword = "newPassword123";
-        when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
-        when(passwordEncoder.encode(newPassword)).thenReturn("encodedNewPassword");
-        when(userRepository.save(any(User.class))).thenReturn(testUser);
-
-        // Act
-        userService.updatePassword(userId, newPassword);
-
-        // Assert
-        verify(passwordEncoder, times(1)).encode(newPassword);
-        verify(userRepository, times(1)).save(any(User.class));
-    }
+    // Removed test for non-existent service method updatePassword
 }

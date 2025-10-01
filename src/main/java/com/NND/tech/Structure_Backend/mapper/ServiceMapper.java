@@ -1,7 +1,7 @@
 package com.NND.tech.Structure_Backend.mapper;
 
-import com.NND.tech.Structure_Backend.dto.ServiceDto;
-import com.NND.tech.Structure_Backend.model.entity.Service;
+import com.NND.tech.Structure_Backend.DTO.ServiceDto;
+import com.NND.tech.Structure_Backend.model.entity.ServiceEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -16,12 +16,12 @@ import org.mapstruct.ReportingPolicy;
 public interface ServiceMapper {
     
     @Mapping(target = "structure", ignore = true)
-    Service toEntity(ServiceDto dto);
+    ServiceEntity toEntity(ServiceDto dto);
     
     @Mapping(target = "structureId", source = "structure.id")
-    ServiceDto toDto(Service entity);
+    ServiceDto toDto(ServiceEntity entity);
     
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "structure", ignore = true)
-    void updateFromDto(ServiceDto dto, @MappingTarget Service entity);
+    void updateFromDto(ServiceDto dto, @MappingTarget ServiceEntity entity);
 }

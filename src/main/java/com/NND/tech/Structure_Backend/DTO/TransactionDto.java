@@ -1,4 +1,4 @@
-package com.NND.tech.Structure_Backend.dto;
+package com.NND.tech.Structure_Backend.DTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

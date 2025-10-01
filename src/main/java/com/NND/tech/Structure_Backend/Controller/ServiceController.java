@@ -1,12 +1,12 @@
 package com.NND.tech.Structure_Backend.controller;
 
-import com.NND.tech.Structure_Backend.dto.ServiceDto;
+import com.NND.tech.Structure_Backend.DTO.ServiceDto;
 import com.NND.tech.Structure_Backend.service.ServiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class ServiceController {
     public ResponseEntity<Void> deleteService(
             @PathVariable Long structureId,
             @PathVariable Long id) {
-        serviceService.delete(id);
+        serviceService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,12 +1,12 @@
 package com.NND.tech.Structure_Backend.controller;
 
-import com.NND.tech.Structure_Backend.dto.UserDto;
+import com.NND.tech.Structure_Backend.DTO.UserDto;
 import com.NND.tech.Structure_Backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 

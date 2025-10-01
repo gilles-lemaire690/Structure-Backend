@@ -1,4 +1,4 @@
-package com.NND.tech.Structure_Backend.dto;
+package com.NND.tech.Structure_Backend.DTO;
 
 import com.NND.tech.Structure_Backend.model.entity.RoleType;
 import lombok.AllArgsConstructor;

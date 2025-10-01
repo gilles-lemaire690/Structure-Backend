@@ -1,4 +1,4 @@
-package com.NND.tech.Structure_Backend.dto;
+package com.NND.tech.Structure_Backend.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -82,14 +82,15 @@ public class StatsDto {
         
         public StatsDto build() {
             StatsDto statsDto = new StatsDto();
-            statsDto.setTotalTransactions(this.totalTransactions);
-            statsDto.setTotalRevenue(this.totalRevenue);
-            statsDto.setTotalStructures(this.totalStructures);
-            statsDto.setTotalUsers(this.totalUsers);
-            statsDto.setTransactionsInPeriod(this.transactionsInPeriod);
-            statsDto.setRevenueInPeriod(this.revenueInPeriod);
-            statsDto.setStructureId(this.structureId);
-            statsDto.setStructureName(this.structureName);
+            // Assign fields directly to avoid reliance on Lombok-generated setters
+            statsDto.totalTransactions = this.totalTransactions;
+            statsDto.totalRevenue = this.totalRevenue;
+            statsDto.totalStructures = this.totalStructures;
+            statsDto.totalUsers = this.totalUsers;
+            statsDto.transactionsInPeriod = this.transactionsInPeriod;
+            statsDto.revenueInPeriod = this.revenueInPeriod;
+            statsDto.structureId = this.structureId;
+            statsDto.structureName = this.structureName;
             return statsDto;
         }
     }

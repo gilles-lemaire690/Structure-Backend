@@ -1,7 +1,9 @@
 package com.NND.tech.Structure_Backend.service;
 
-import com.NND.tech.Structure_Backend.dto.ServiceDto;
-import com.NND.tech.Structure_Backend.exception.ResourceNotFoundException;
+import com.NND.tech.Structure_Backend.DTO.ServiceDto;
+import com.NND.tech.Structure_Backend.Exception.ResourceNotFoundException;
+import com.NND.tech.Structure_Backend.mapper.ServiceMapper;
+import com.NND.tech.Structure_Backend.model.entity.ServiceEntity;
 // Utilisation du nom complet pour éviter l'ambiguïté avec l'annotation @Service
 import com.NND.tech.Structure_Backend.model.entity.Structure;
 import com.NND.tech.Structure_Backend.repository.ServiceRepository;
@@ -55,18 +57,18 @@ class ServiceServiceImpl implements ServiceService {
             throw new IllegalArgumentException("Un service avec ce nom existe déjà pour cette structure");
         }
         
-        Service service = serviceMapper.toEntity(serviceDto);
+        ServiceEntity service = serviceMapper.toEntity(serviceDto);
         service.setStructure(structure);
         service.setActive(true);
         
-        Service savedService = serviceRepository.save(service);
+        ServiceEntity savedService = serviceRepository.save(service);
         return serviceMapper.toDto(savedService);
     }
 
     @Override
     @Transactional
     public ServiceDto update(Long id, ServiceDto serviceDto) {
-        Service existingService = serviceRepository.findByIdAndActiveTrue(id)
+        ServiceEntity existingService = serviceRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Service non trouvé avec l'id : " + id));
         
         // Vérification du nom unique si modifié
@@ -76,14 +78,14 @@ class ServiceServiceImpl implements ServiceService {
         }
         
         serviceMapper.updateFromDto(serviceDto, existingService);
-        Service updatedService = serviceRepository.save(existingService);
+        ServiceEntity updatedService = serviceRepository.save(existingService);
         return serviceMapper.toDto(updatedService);
     }
 
     @Override
     @Transactional
-    public void delete(Long id) {
-        Service service = serviceRepository.findByIdAndActiveTrue(id)
+    public void deleteById(Long id) {
+        ServiceEntity service = serviceRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Service non trouvé avec l'id : " + id));
         
         // Soft delete

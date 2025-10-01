@@ -1,10 +1,11 @@
-package com.NND.tech.Structure_Backend.Repository;
+package com.NND.tech.Structure_Backend.repository;
 
 import com.NND.tech.Structure_Backend.model.entity.ServiceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ServiceProduitRepository extends JpaRepository<ServiceEntity, Long> {

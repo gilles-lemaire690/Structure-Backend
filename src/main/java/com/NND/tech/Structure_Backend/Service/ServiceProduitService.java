@@ -1,4 +1,4 @@
-package com.NND.tech.Structure_Backend.Service;
+package com.NND.tech.Structure_Backend.service;
 
 import com.NND.tech.Structure_Backend.DTO.ServiceProduitRequest;
 import com.NND.tech.Structure_Backend.repository.ServiceRepository;
@@ -31,15 +31,14 @@ public class ServiceProduitService {
             throw new IllegalStateException("Cet admin n'est associé à aucune structure.");
         }
 
-        ServiceEntity service = ServiceEntity.builder()
-                .name(request.getNom())
-                .description(request.getDescription())
-                .price(new BigDecimal(request.getPrix()))
-                .structure(structure)
-                .category("default") // À mettre à jour selon la logique métier
-                .duration(0) // Valeur par défaut, à mettre à jour selon la logique métier
-                .active(true)
-                .build();
+        ServiceEntity service = new ServiceEntity();
+        service.setName(request.getNom());
+        service.setDescription(request.getDescription());
+        service.setPrice(request.getPrix());
+        service.setStructure(structure);
+        service.setCategory("default"); // Valeur par défaut, à mettre à jour selon la logique métier
+        service.setDuration(0); // Valeur par défaut, à mettre à jour selon la logique métier
+        service.setActive(true);
 
         return serviceRepository.save(service);
     }
@@ -52,7 +51,7 @@ public class ServiceProduitService {
 
         service.setName(request.getNom());
         service.setDescription(request.getDescription());
-        service.setPrice(new BigDecimal(request.getPrix()));
+        service.setPrice(request.getPrix());
         // Mettre à jour d'autres champs si nécessaire
 
         return serviceRepository.save(service);

@@ -1,15 +1,20 @@
-package com.NND.tech.Structure_Backend.Service;
+package com.NND.tech.Structure_Backend.service;
 
 import com.NND.tech.Structure_Backend.DTO.AuthenticationRequest;
 import com.NND.tech.Structure_Backend.DTO.AuthenticationResponse;
 import com.NND.tech.Structure_Backend.DTO.RegisterRequest;
-import com.NND.tech.Structure_Backend.repository.UserRepository;
 import com.NND.tech.Structure_Backend.config.JwtService;
+import com.NND.tech.Structure_Backend.Exception.ResourceNotFoundException;
 import com.NND.tech.Structure_Backend.model.entity.RoleType;
+import com.NND.tech.Structure_Backend.model.entity.Structure;
 import com.NND.tech.Structure_Backend.model.entity.User;
+import com.NND.tech.Structure_Backend.repository.StructureRepository;
+import com.NND.tech.Structure_Backend.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,24 +24,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Service
+@RequiredArgsConstructor
 public class AuthenticationService {
 
     private static final Logger logger = Logger.getLogger(AuthenticationService.class.getName());
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
+    private final StructureRepository structureRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
-
-    public AuthenticationService(UserRepository repository,
-                               JwtService jwtService,
-                               AuthenticationManager authenticationManager,
-                               PasswordEncoder passwordEncoder) {
-        this.repository = repository;
-        this.jwtService = jwtService;
-        this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         logger.info("=== Début de l'authentification pour: " + request.getEmail() + " ===");
@@ -51,11 +48,21 @@ public class AuthenticationService {
             );
 
             // Récupération de l'utilisateur
-            User user = repository.findByEmail(request.getEmail())
+            User user = userRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new BadCredentialsException("Email ou mot de passe incorrect"));
 
-            // Générer le token
-            var jwtToken = jwtService.generateToken(user);
+            // Vérifier si l'utilisateur est actif
+            if (!user.isActive()) {
+                throw new BadCredentialsException("Ce compte a été désactivé");
+            }
+
+            // Générer le token (JwtService attend un UserDetails)
+            UserDetails springUser = org.springframework.security.core.userdetails.User
+                    .withUsername(user.getEmail())
+                    .password(user.getPassword())
+                    .authorities(user.getRole().name())
+                    .build();
+            var jwtToken = jwtService.generateToken(springUser);
 
             logger.info("Authentification réussie pour: " + request.getEmail());
 
@@ -63,7 +70,7 @@ public class AuthenticationService {
                     jwtToken,
                     user.getEmail(),
                     user.getRole().name(),
-                    3600L // durée d'expiration fictive, à remplacer si nécessaire
+                    jwtService.getExpirationTime()
             );
 
         } catch (BadCredentialsException e) {
@@ -79,24 +86,22 @@ public class AuthenticationService {
     public AuthenticationResponse register(RegisterRequest request) {
         logger.info("=== Début de l'enregistrement pour: " + request.getEmail() + " ===");
 
-        // Validation des données d'entrée
-        validateRegisterRequest(request);
-
         // Vérifier si l'utilisateur existe déjà
-        Optional<User> existingUser = repository.findByEmail(request.getEmail());
-        if (existingUser.isPresent()) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Un utilisateur avec cet email existe déjà");
         }
 
         try {
             // Créer un nouvel utilisateur avec le builder
-            User.UserBuilder userBuilder = User.builder()
+            User user = User.builder()
                     .email(request.getEmail())
                     .password(passwordEncoder.encode(request.getPassword()))
                     .firstName(request.getFirstName())
                     .lastName(request.getLastName())
                     .phone(request.getTelephone())
-                    .active(true);
+                    .role(RoleType.USER) // Par défaut, on crée un utilisateur standard
+                    .active(true)
+                    .build();
 
             // Gestion du rôle
             String roleStr = request.getRole();
@@ -111,35 +116,37 @@ public class AuthenticationService {
                     }
                 }
                 if (found == null) {
-                    throw new IllegalArgumentException("Rôle invalide : " + request.getRole());
+                    throw new IllegalArgumentException("Rôle invalide: " + roleStr);
                 }
-                userBuilder.role(found);
+                user.setRole(found);
             } else {
                 throw new IllegalArgumentException("Le champ 'role' est requis");
             }
 
-            User user = userBuilder.build();
+            // Association de structure non gérée ici (RegisterRequest ne contient pas de structureId)
 
-            repository.save(user);
+            User savedUser = userRepository.save(user);
 
-            // Générer le token JWT
-            var jwtToken = jwtService.generateToken(user);
+            // Générer le token après l'enregistrement
+            UserDetails springUser = org.springframework.security.core.userdetails.User
+                    .withUsername(savedUser.getEmail())
+                    .password(savedUser.getPassword())
+                    .authorities(savedUser.getRole().name())
+                    .build();
+            var jwtToken = jwtService.generateToken(springUser);
 
-            logger.info("Enregistrement réussi pour: " + request.getEmail());
+            logger.info("Utilisateur enregistré avec succès: " + savedUser.getEmail());
 
             return new AuthenticationResponse(
                     jwtToken,
-                    user.getEmail(),
-                    user.getRole().name(),
-                    3600L // durée fictive
+                    savedUser.getEmail(),
+                    savedUser.getRole().name(),
+                    jwtService.getExpirationTime()
             );
 
-        } catch (IllegalArgumentException e) {
-            logger.severe("Rôle invalide : " + request.getRole());
-            throw new RuntimeException("Rôle invalide : " + request.getRole(), e);
         } catch (Exception e) {
-            logger.severe("Erreur lors de l'enregistrement: " + e.getMessage());
-            throw new RuntimeException("Erreur lors de l'enregistrement", e);
+            logger.log(Level.SEVERE, "Erreur lors de l'enregistrement", e);
+            throw new RuntimeException("Erreur lors de l'enregistrement: " + e.getMessage(), e);
         }
     }
 
