@@ -44,16 +44,16 @@ public class StructureService {
 
     @Transactional
     public StructureDto create(StructureRequest request) {
-        if (structureRepository.existsByName(request.getNom())) {
+        if (structureRepository.existsByName(request.getName())) {
             throw new IllegalArgumentException("Une structure avec ce nom existe déjà");
         }
         
         Structure structure = new Structure();
-        structure.setName(request.getNom());
+        structure.setName(request.getName());
         structure.setDescription(request.getDescription());
-        structure.setAddress(request.getAdresse());
-        structure.setImageUrl(request.getLogoUrl());
-        structure.setPhone(request.getTelephone());
+        structure.setAddress(request.getAddress());
+        structure.setImageUrl(request.getImageUrl());
+        structure.setPhone(request.getPhone());
         structure.setEmail(request.getEmail());
         structure.setActive(true);
 

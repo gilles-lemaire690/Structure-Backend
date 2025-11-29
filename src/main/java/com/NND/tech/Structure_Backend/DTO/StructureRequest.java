@@ -8,44 +8,32 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class StructureRequest {
-    private String nom;
-    private String prenom;
+    private String name;
     private String email;
-    private String password;
     private String description;
-    private String adresse;
-    private String logoUrl;
-    private String telephone;
+    private String address;
+    private String imageUrl;
+    private String phone;
 
 
     public StructureRequest() {
     }
 
-    public StructureRequest(String nom, String prenom, String email, String password, String description, String adresse, String logoUrl, String telephone) {
-        this.nom = nom;
-        this.prenom = prenom;
+    public StructureRequest(String name, String email, String description, String address, String imageUrl, String phone) {
+        this.name = name;
         this.email = email;
-        this.password = password;
         this.description = description;
-        this.adresse = adresse;
-        this.logoUrl = logoUrl;
-        this.telephone = telephone;
+        this.address = address;
+        this.imageUrl = imageUrl;
+        this.phone = phone;
     }
 
-    public String getNom() {
-        return nom;
+    public String getName() {
+        return name;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public String getPrenom() {
-        return prenom;
-    }
-
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -56,14 +44,6 @@ public class StructureRequest {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -72,27 +52,27 @@ public class StructureRequest {
         this.description = description;
     }
 
-    public String getAdresse() {
-        return adresse;
+    public String getAddress() {
+        return address;
     }
 
-    public void setAdresse(String adresse) {
-        this.adresse = adresse;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public String getLogoUrl() {
-        return logoUrl;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setLogoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public String getTelephone() {
-        return telephone;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }
