@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 public class ServiceDto {
     private Long id;
     private String name;
+    private String category;
     private String description;
     private BigDecimal price;
     private int duration;
